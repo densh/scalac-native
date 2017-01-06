@@ -1,8 +1,20 @@
-enablePlugins(ScalaNativePlugin)
-
-scalaVersion := "2.11.8"
-
-libraryDependencies ++= Seq(
-  "org.scala-lang.modules" % "scala-asm" % "5.1.0-scala-1",
-  "org.apache.ant"         % "ant"       % "1.9.4"
+val shared = Seq(
+  scalaVersion := "2.11.11"
 )
+
+lazy val asm =
+  project.in(file("asm"))
+    .enablePlugins(ScalaNativePlugin)
+    .settings(shared)
+
+lazy val scalac =
+  project.in(file("scalac"))
+    .dependsOn(asm)
+    .enablePlugins(ScalaNativePlugin)
+    .settings(shared)
+
+lazy val scalacmain =
+  project.in(file("scalacmain"))
+    .enablePlugins(ScalaNativePlugin)
+    .dependsOn(scalac)
+    .settings(shared)
