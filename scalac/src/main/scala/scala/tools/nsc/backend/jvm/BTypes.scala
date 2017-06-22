@@ -7,7 +7,7 @@ package scala.tools.nsc
 package backend.jvm
 
 import scala.annotation.switch
-import scala.collection.concurrent.TrieMap
+import scala.collection.mutable
 import scala.reflect.internal.util.Position
 import scala.tools.asm
 import asm.Opcodes
@@ -68,13 +68,13 @@ abstract class BTypes {
    * Concurrent because stack map frames are computed when in the class writer, which might run
    * on multiple classes concurrently.
    */
-  val classBTypeFromInternalName: collection.concurrent.Map[InternalName, ClassBType] = recordPerRunCache(TrieMap.empty)
+  val classBTypeFromInternalName: mutable.Map[InternalName, ClassBType] = recordPerRunCache(mutable.Map.empty)
 
   /**
    * Store the position of every MethodInsnNode during code generation. This allows each callsite
    * in the call graph to remember its source position, which is required for inliner warnings.
    */
-  val callsitePositions: collection.concurrent.Map[MethodInsnNode, Position] = recordPerRunCache(TrieMap.empty)
+  val callsitePositions: mutable.Map[MethodInsnNode, Position] = recordPerRunCache(mutable.Map.empty)
 
   /**
    * Contains the internal names of all classes that are defined in Java source files of the current
@@ -97,7 +97,7 @@ abstract class BTypes {
   /**
    * Obtain the BType for a type descriptor or internal name. For class descriptors, the ClassBType
    * is constructed by parsing the corresponding classfile.
-   * 
+   *
    * Some JVM operations use either a full descriptor or only an internal name. Example:
    *   ANEWARRAY java/lang/String    // a new array of strings (internal name for the String class)
    *   ANEWARRAY [Ljava/lang/String; // a new array of array of string (full descriptor for the String class)

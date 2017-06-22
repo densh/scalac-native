@@ -12,6 +12,7 @@ import scala.tools.asm.tree.analysis.{Value, Analyzer, BasicInterpreter}
 import scala.tools.asm.{Opcodes, Type, Handle}
 import scala.tools.asm.tree._
 import scala.collection.concurrent
+import scala.collection.mutable
 import scala.collection.convert.decorateAsScala._
 import scala.tools.nsc.backend.jvm.BTypes.InternalName
 import scala.tools.nsc.backend.jvm.BackendReporting._
@@ -22,9 +23,9 @@ import BytecodeUtils._
 class CallGraph[BT <: BTypes](val btypes: BT) {
   import btypes._
 
-  val callsites: concurrent.Map[MethodInsnNode, Callsite] = recordPerRunCache(concurrent.TrieMap.empty)
+  val callsites: mutable.Map[MethodInsnNode, Callsite] = recordPerRunCache(mutable.Map.empty)
 
-  val closureInstantiations: concurrent.Map[InvokeDynamicInsnNode, ClosureInstantiation] = recordPerRunCache(concurrent.TrieMap.empty)
+  val closureInstantiations: mutable.Map[InvokeDynamicInsnNode, ClosureInstantiation] = recordPerRunCache(mutable.Map.empty)
 
   def addClass(classNode: ClassNode): Unit = {
     val classType = classBTypeFromClassNode(classNode)
