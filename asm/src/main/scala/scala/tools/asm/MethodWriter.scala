@@ -34,7 +34,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     private var name   : Int = _
     private var desc   : Int = _
     private var descriptor: String = _
-    var signaturek: String = _
+    var signature: String = _
     var classReaderOffset : Int = _
     var classReaderLength : Int = _
     var exceptionCount    : Int = _
@@ -80,6 +80,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     private var currentBlock  : Label = _
     private var stackSize: Int = _
     private var maxStackSize: Int = _
+    private var cw: ClassWriter = _
 
     def getMaxStack(): Int = maxStack
     def getMaxLocals(): Int = maxLocals
@@ -89,8 +90,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             exceptions: Array[String], computeMaxs: Boolean,
             computeFrames: Boolean) = {
         this()
-        ???
-        /*
+
         if (cw.firstMethod == null) {
             cw.firstMethod = this
         } else {
@@ -100,7 +100,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         this.cw = cw
         this.access = access
         if ("<init>".equals(name)) {
-            this.access |= ACC_CONSTRUCTOR
+            this.access |= MethodWriter.ACC_CONSTRUCTOR
         }
         this.name = cw.newUTF8(name)
         this.desc = cw.newUTF8(desc)
@@ -110,17 +110,17 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
         if (exceptions != null && exceptions.length > 0) {
             exceptionCount = exceptions.length
-            this.exceptions = new int[exceptionCount]
-            for (int i = 0 i < exceptionCount ++i) {
-                this.exceptions(i) = cw.newClass(exceptions(i))
+            this.exceptions = new Array[Int](exceptionCount)
+            (0 until exceptionCount).foreach { i =>
+              this.exceptions(i) = cw.newClass(exceptions(i))
             }
         }
-        this.compute = computeFrames ? FRAMES : (computeMaxs ? MAXS : NOTHING)
+        this.compute = if (computeFrames) MethodWriter.FRAMES else (if (computeMaxs) MethodWriter.MAXS else MethodWriter.NOTHING)
         if (computeMaxs || computeFrames) {
             // updates maxLocals
-            int size = Type.getArgumentsAndReturnSizes(descriptor) >> 2
+            var size = Type.getArgumentsAndReturnSizes(descriptor) >> 2
             if ((access & Opcodes.ACC_STATIC) != 0) {
-                --size
+              size -= 1
             }
             maxLocals = size
             currentLocals = size
@@ -129,7 +129,6 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             labels.status |= Label.PUSHED
             visitLabel(labels)
         }
-        */
     }
 
     override

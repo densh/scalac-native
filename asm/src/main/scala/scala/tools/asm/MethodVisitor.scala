@@ -29,7 +29,7 @@
  */
 package scala.tools.asm
 
-abstract class MethodVisitor(val api: Int, val mv: MethodVisitor) {
+abstract class MethodVisitor(val api: Int, var mv: MethodVisitor) {
     if (api != Opcodes.ASM4 && api != Opcodes.ASM5) {
         throw new IllegalArgumentException()
     }
