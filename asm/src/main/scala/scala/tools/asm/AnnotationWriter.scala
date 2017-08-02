@@ -49,78 +49,77 @@ class AnnotationWriter extends AnnotationVisitor(Opcodes.ASM5) {
         this.offset = offset
     }
 
-    override
-    def visit(name: String, value: Any): Unit = ???/*{
-        ++size
-        if (named) {
-            bv.putShort(cw.newUTF8(name))
+    override def visit(name: String, value: Any): Unit = {
+      size += 1
+      if (named) {
+        bv.putShort(cw.newUTF8(name))
+      }
+      if (value.isInstanceOf[String]) {
+        bv.put12('s', cw.newUTF8(value.asInstanceOf[String]))
+      } else if (value.isInstanceOf[Byte]) {
+        bv.put12('B', cw.newInteger(value.asInstanceOf[Byte].byteValue()).index)
+      } else if (value.isInstanceOf[Boolean]) {
+        val v = if (value.asInstanceOf[Boolean].booleanValue()) 1 else 0
+        bv.put12('Z', cw.newInteger(v).index)
+      } else if (value.isInstanceOf[Character]) {
+        bv.put12('C', cw.newInteger(value.asInstanceOf[Character].charValue()).index)
+      } else if (value.isInstanceOf[Short]) {
+        bv.put12('S', cw.newInteger(value.asInstanceOf[Short].shortValue()).index)
+      } else if (value.isInstanceOf[Type]) {
+        bv.put12('c', cw.newUTF8(value.asInstanceOf[Type].getDescriptor()))
+      } else if (value.isInstanceOf[Array[Byte]]) {
+        val v = value.asInstanceOf[Array[Byte]]
+        bv.put12('x', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('B', cw.newInteger(v(i)).index)
         }
-        if (value instanceof String) {
-            bv.put12('s', cw.newUTF8((String) value))
-        } else if (value instanceof Byte) {
-            bv.put12('B', cw.newInteger(((Byte) value).byteValue()).index)
-        } else if (value instanceof Boolean) {
-            int v = ((Boolean) value).booleanValue() ? 1 : 0
-            bv.put12('Z', cw.newInteger(v).index)
-        } else if (value instanceof Character) {
-            bv.put12('C', cw.newInteger(((Character) value).charValue()).index)
-        } else if (value instanceof Short) {
-            bv.put12('S', cw.newInteger(((Short) value).shortValue()).index)
-        } else if (value instanceof Type) {
-            bv.put12('c', cw.newUTF8(((Type) value).getDescriptor()))
-        } else if (value instanceof byte[]) {
-            byte[] v = (byte[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('B', cw.newInteger(v[i]).index)
-            }
-        } else if (value instanceof boolean[]) {
-            boolean[] v = (boolean[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('Z', cw.newInteger(v[i] ? 1 : 0).index)
-            }
-        } else if (value instanceof short[]) {
-            short[] v = (short[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('S', cw.newInteger(v[i]).index)
-            }
-        } else if (value instanceof char[]) {
-            char[] v = (char[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('C', cw.newInteger(v[i]).index)
-            }
-        } else if (value instanceof int[]) {
-            int[] v = (int[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('I', cw.newInteger(v[i]).index)
-            }
-        } else if (value instanceof long[]) {
-            long[] v = (long[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('J', cw.newLong(v[i]).index)
-            }
-        } else if (value instanceof float[]) {
-            float[] v = (float[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('F', cw.newFloat(v[i]).index)
-            }
-        } else if (value instanceof double[]) {
-            double[] v = (double[]) value
-            bv.put12('[', v.length)
-            for (int i = 0 i < v.length i++) {
-                bv.put12('D', cw.newDouble(v[i]).index)
-            }
-        } else {
-            Item i = cw.newConstItem(value)
-            bv.put12(".s.IFJDCS".charAt(i.type), i.index)
+      } else if (value.isInstanceOf[Array[Boolean]]) {
+        val v = value.asInstanceOf[Array[Boolean]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('Z', cw.newInteger(if (v(i)) 1 else 0).index)
         }
-    }*/
+      } else if (value.isInstanceOf[Array[Short]]) {
+        val v = value.asInstanceOf[Array[Short]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('S', cw.newInteger(v(i)).index)
+        }
+      } else if (value.isInstanceOf[Array[Char]]) {
+        val v = value.asInstanceOf[Array[Char]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('C', cw.newInteger(v(i)).index)
+        }
+      } else if (value.isInstanceOf[Array[Int]]) {
+        val v = value.asInstanceOf[Array[Int]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('I', cw.newInteger(v(i)).index)
+        }
+      } else if (value.isInstanceOf[Array[Long]]) {
+        val v = value.asInstanceOf[Array[Long]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('J', cw.newLong(v(i)).index)
+        }
+      } else if (value.isInstanceOf[Array[Float]]) {
+        val v = value.asInstanceOf[Array[Float]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('F', cw.newFloat(v(i)).index)
+        }
+      } else if (value.isInstanceOf[Array[Double]]) {
+        val v = value.asInstanceOf[Array[Double]]
+        bv.put12('[', v.length)
+        (0 until v.length).foreach { i =>
+          bv.put12('D', cw.newDouble(v(i)).index)
+        }
+      } else {
+        val i = cw.newConstItem(value)
+        bv.put12(".s.IFJDCS".charAt(i.type_), i.index)
+      }
+    }
 
     override
     def visitEnum(name: String, desc: String, value: String): Unit = ???/*{
