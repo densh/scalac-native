@@ -457,16 +457,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
     def newConst(cst: Object): Int =
         newConstItem(cst).index
 
-    def newUTF8(value: String): Int = ???/*{
+    def newUTF8(value: String): Int = {
         key.set(UTF8, value, null, null)
-        Item result = get(key)
+        var result = get(key)
         if (result == null) {
-            pool.putByte(UTF8).putUTF8(value)
-            result = new Item(index++, key)
-            put(result)
+          pool.putByte(UTF8).putUTF8(value)
+          result = new Item(index, key)
+          index += 1
+          put(result)
         }
-        return result.index
-    }*/
+        result.index
+    }
 
     def newClassItem(value: String): Item = {
       key2.set(CLASS, value, null, null)
