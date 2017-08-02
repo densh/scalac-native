@@ -381,17 +381,17 @@ object Type {
         return buf.append(")V").toString()
     }*/
 
-    def getMethodDescriptor(m: Method): String = ???/*{
-        Class<?>[] parameters = m.getParameterTypes()
-        StringBuilder buf = new StringBuilder()
-        buf.append('(')
-        for (int i = 0 i < parameters.length ++i) {
-            getDescriptor(buf, parameters[i])
-        }
-        buf.append(')')
-        getDescriptor(buf, m.getReturnType())
-        return buf.toString()
-    }*/
+    def getMethodDescriptor(m: Method): String = {
+      val parameters = m.getParameterTypes()
+      val buf = new StringBuilder()
+      buf.append('(')
+      (0 until parameters.length).foreach { i =>
+        getDescriptor(buf, parameters(i))
+      }
+      buf.append(')')
+      getDescriptor(buf, m.getReturnType())
+      buf.toString()
+    }
 
     private def getDescriptor(buf: StringBuilder, c: Class[_]): Unit = {
       var d = c
