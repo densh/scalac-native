@@ -209,11 +209,11 @@ class ByteVector(initialSize: Int) {
         return this
     }*/
 
-    private def enlarge(size: Int): Unit = ???/*{
-        int length1 = 2 * data.length
-        int length2 = length + size
-        byte[] newData = new byte[length1 > length2 ? length1 : length2]
+    private def enlarge(size: Int): Unit = {
+        val length1 = 2 * data.length
+        val length2 = length + size
+        val newData = new Array[Byte](if (length1 > length2) length1 else length2)
         System.arraycopy(data, 0, newData, 0, length)
         data = newData
-    }*/
+    }
 }
