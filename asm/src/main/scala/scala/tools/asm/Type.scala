@@ -428,14 +428,14 @@ object Type {
       }
     }
 
-    def getMethodDescriptor(returnType: Type, argumentTypes: Type*): String = ???/*{
-        StringBuilder buf = new StringBuilder()
+    def getMethodDescriptor(returnType: Type, argumentTypes: Type*): String = {
+        val buf = new StringBuilder()
         buf.append('(')
-        for (int i = 0 i < argumentTypes.length ++i) {
-            argumentTypes[i].getDescriptor(buf)
+        (0 until argumentTypes.length).foreach { i =>
+            argumentTypes(i).getDescriptor(buf)
         }
         buf.append(')')
         returnType.getDescriptor(buf)
-        return buf.toString()
-    }*/
+        buf.toString()
+    }
 }
