@@ -390,13 +390,12 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
     }*/
 
-    override
-    def visitVarInsn(opcode: Int, var_ : Int): Unit = ???/*{
+    override def visitVarInsn(opcode: Int, var_ : Int): Unit = {
         lastCodeOffset = code.length
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
-                currentBlock.frame.execute(opcode, var, null, null)
+            if (compute == MethodWriter.FRAMES) {
+                currentBlock.frame.execute(opcode, var_, null, null)
             } else {
                 // updates current and max stack sizes
                 if (opcode == Opcodes.RET) {
@@ -407,7 +406,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                     currentBlock.inputStackTop = stackSize
                     noSuccessor()
                 } else { // xLOAD or xSTORE
-                    int size = stackSize + Frame.SIZE[opcode]
+                    val size = stackSize + Frame.SIZE(opcode)
                     if (size > maxStackSize) {
                         maxStackSize = size
                     }
@@ -415,37 +414,37 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 }
             }
         }
-        if (compute != NOTHING) {
+        if (compute != MethodWriter.NOTHING) {
             // updates max locals
-            int n
+            var n = 0
             if (opcode == Opcodes.LLOAD || opcode == Opcodes.DLOAD
                     || opcode == Opcodes.LSTORE || opcode == Opcodes.DSTORE) {
-                n = var + 2
+                n = var_ + 2
             } else {
-                n = var + 1
+                n = var_ + 1
             }
             if (n > maxLocals) {
                 maxLocals = n
             }
         }
         // adds the instruction to the bytecode of the method
-        if (var < 4 && opcode != Opcodes.RET) {
-            int opt
+        if (var_ < 4 && opcode != Opcodes.RET) {
+            var opt = 0
             if (opcode < Opcodes.ISTORE) {
-                opt = 26 + ((opcode - Opcodes.ILOAD) << 2) + var
+                opt = 26 + ((opcode - Opcodes.ILOAD) << 2) + var_
             } else {
-                opt = 59 + ((opcode - Opcodes.ISTORE) << 2) + var
+                opt = 59 + ((opcode - Opcodes.ISTORE) << 2) + var_
             }
             code.putByte(opt)
-        } else if (var >= 256) {
-            code.putByte(196).put12(opcode, var)
+        } else if (var_ >= 256) {
+            code.putByte(196).put12(opcode, var_)
         } else {
-            code.put11(opcode, var)
+            code.put11(opcode, var_)
         }
-        if (opcode >= Opcodes.ISTORE && compute == FRAMES && handlerCount > 0) {
+        if (opcode >= Opcodes.ISTORE && compute == MethodWriter.FRAMES && handlerCount > 0) {
             visitLabel(new Label())
         }
-    }*/
+    }
 
     override
     def visitTypeInsn(opcode: Int, type_ : String): Unit = ???/*{
