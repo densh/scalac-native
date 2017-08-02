@@ -97,19 +97,18 @@ class Type(val sort: Int, val buf: Array[Char], val off: Int, val len: Int) {
         buf.toString()
     }
 
-    private def getDescriptor(buf:StringBuilder ): Unit = ???/*{
-        if (this.buf == null) {
-            // descriptor is in byte 3 of 'off' for primitive types (buf ==
-            // null)
-            buf.append((char) ((off & 0xFF000000) >>> 24))
-        } else if (sort == OBJECT) {
-            buf.append('L')
-            buf.append(this.buf, off, len)
-            buf.append('')
-        } else { // sort == ARRAY || sort == METHOD
-            buf.append(this.buf, off, len)
-        }
-    }*/
+    private def getDescriptor(buf: StringBuilder ): Unit =
+      if (this.buf == null) {
+        // descriptor is in byte 3 of 'off' for primitive types (buf ==
+        // null)
+        buf.append(((off & 0xFF000000) >>> 24).toChar)
+      } else if (sort == Type.OBJECT) {
+        buf.append('L')
+        buf.append(this.buf, off, len)
+        buf.append(';')
+      } else { // sort == ARRAY || sort == METHOD
+        buf.append(this.buf, off, len)
+      }
 
     def getSize(): Int =
         // the size is in byte 0 of 'off' for primitive types (buf == null)
@@ -394,48 +393,40 @@ object Type {
         return buf.toString()
     }*/
 
-    private def getDescriptor(buf: StringBuilder, c: Class[_]): Unit = ???/*{
-        Class<?> d = c
-        while (true) {
-            if (d.isPrimitive()) {
-                char car
-                if (d == Integer.TYPE) {
-                    car = 'I'
-                } else if (d == Void.TYPE) {
-                    car = 'V'
-                } else if (d == Boolean.TYPE) {
-                    car = 'Z'
-                } else if (d == Byte.TYPE) {
-                    car = 'B'
-                } else if (d == Character.TYPE) {
-                    car = 'C'
-                } else if (d == Short.TYPE) {
-                    car = 'S'
-                } else if (d == Double.TYPE) {
-                    car = 'D'
-                } else if (d == Float.TYPE) {
-                    car = 'F'
-                } else {
-                    car = 'J'
-                }
-                buf.append(car)
-                return
-            } else if (d.isArray()) {
-                buf.append('[')
-                d = d.getComponentType()
-            } else {
-                buf.append('L')
-                String name = d.getName()
-                int len = name.length()
-                for (int i = 0 i < len ++i) {
-                    char car = name.charAt(i)
-                    buf.append(car == '.' ? '/' : car)
-                }
-                buf.append('')
-                return
+    private def getDescriptor(buf: StringBuilder, c: Class[_]): Unit = {
+      var d = c
+      var continue = true
+      while (continue) {
+        if (d.isPrimitive()) {
+          val car =
+            d match {
+              case java.lang.Integer.TYPE   => 'I'
+              case java.lang.Void.TYPE      => 'V'
+              case java.lang.Boolean.TYPE   => 'Z'
+              case java.lang.Byte.TYPE      => 'B'
+              case java.lang.Character.TYPE => 'C'
+              case java.lang.Short.TYPE     => 'S'
+              case java.lang.Double.TYPE    => 'D'
+              case java.lang.Float.TYPE     => 'F'
+              case _              => 'J'
             }
+          buf.append(car)
+          continue = false
+        } else if (d.isArray()) {
+          buf.append('[')
+          d = d.getComponentType()
+        } else {
+          buf.append('L')
+          val name = d.getName()
+          val len = name.length()
+          name.foreach { c =>
+            buf.append(if (c == '.') '/' else c)
+          }
+          buf.append(';')
+          continue = false
         }
-    }*/
+      }
+    }
 
     def getMethodDescriptor(returnType: Type, argumentTypes: Type*): String = ???/*{
         StringBuilder buf = new StringBuilder()
