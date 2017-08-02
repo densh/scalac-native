@@ -771,13 +771,13 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         }
     }*/
 
-    private def get(key: Item): Item = ???/*{
-        Item i = items[key.hashCode % items.length]
-        while (i != null && (i.type != key.type || !key.isEqualTo(i))) {
-            i = i.next
-        }
-        return i
-    }*/
+    private def get(key: Item): Item = {
+      var i = items(key.hashCode % items.length)
+      while (i != null && (i.type_ != key.type_ || !key.isEqualTo(i))) {
+        i = i.next
+      }
+      i
+    }
 
     private def put(i: Item): Unit = ???/*{
         if (index + typeCount > threshold) {
