@@ -152,14 +152,13 @@ class AnnotationWriter extends AnnotationVisitor(Opcodes.ASM5) {
         return new AnnotationWriter(cw, false, bv, bv, bv.length - 2)
     }*/
 
-    override
-    def visitEnd(): Unit = ???/*{
+    override def visitEnd(): Unit = {
         if (parent != null) {
-            byte[] data = parent.data
-            data[offset] = (byte) (size >>> 8)
-            data[offset + 1] = (byte) size
+            val data = parent.data
+            data(offset) = (size >>> 8).toByte
+            data(offset + 1) = size.toByte
         }
-    }*/
+    }
 
     def getSize(): Int = ???/*{
         int size = 0
