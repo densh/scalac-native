@@ -58,17 +58,19 @@ class ByteVector(initialSize: Int) {
         return this
     }*/
 
-    def putShort(s: Int): ByteVector = ???/*{
-        int length = this.length
-        if (length + 2 > data.length) {
+    def putShort(s: Int): ByteVector = {
+        var length = this.length
+        if (length + 2 > this.data.length) {
             enlarge(2)
         }
-        byte[] data = this.data
-        data[length++] = (byte) (s >>> 8)
-        data[length++] = (byte) s
+        val data = this.data
+        data(length) = (s >>> 8).toByte
+        length += 1
+        data(length) = s.toByte
+        length += 1
         this.length = length
-        return this
-    }*/
+        this
+    }
 
     def put12(b: Int, s: Int): ByteVector = {
         var length = this.length
