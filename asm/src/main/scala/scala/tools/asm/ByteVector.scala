@@ -117,36 +117,40 @@ class ByteVector(initialSize: Int) {
         return this
     }*/
 
-    def putUTF8(s: String): ByteVector = ???/*{
-        int charLength = s.length()
+    def putUTF8(s: String): ByteVector = {
+        val charLength = s.length()
         if (charLength > 65535) {
             throw new IllegalArgumentException("Maximum String literal length exceeded")
         }
-        int len = length
-        if (len + 2 + charLength > data.length) {
+        var len = length
+        if (len + 2 + charLength > this.data.length) {
             enlarge(2 + charLength)
         }
-        byte[] data = this.data
+        val data = this.data
         // optimistic algorithm: instead of computing the byte length and then
         // serializing the string (which requires two loops), we assume the byte
         // length is equal to char length (which is the most frequent case), and
         // we start serializing the string right away. During the serialization,
         // if we find that this assumption is wrong, we continue with the
         // general method.
-        data[len++] = (byte) (charLength >>> 8)
-        data[len++] = (byte) charLength
-        for (int i = 0 i < charLength ++i) {
-            char c = s.charAt(i)
-            if (c >= '\001' && c <= '\177') {
-                data[len++] = (byte) c
-            } else {
-                length = len
-                return encodeUTF8(s, i, 65535)
-            }
+        data(len) = (charLength >>> 8).toByte
+        len += 1
+        data(len) = charLength.toByte
+        len += 1
+
+        (0 until charLength).foreach { i =>
+          val c = s.charAt(i)
+          if (c >= '\001' && c <= '\177') {
+            data(len) = c.toByte
+            len += 1
+          } else {
+            length = len
+            return encodeUTF8(s, i, 65535)
+          }
         }
         length = len
-        return this
-    }*/
+        this
+    }
 
     def encodeUTF8(s: String, i: Int, maxByteLength: Int): ByteVector = ???/*{
         int charLength = s.length()
