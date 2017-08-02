@@ -317,50 +317,40 @@ object Type {
         }
     }*/
 
-    private def getType(buf: Array[Char], off: Int): Type = ???/*{
-        int len
-        switch (buf[off]) {
-        case 'V':
-            return VOID_TYPE
-        case 'Z':
-            return BOOLEAN_TYPE
-        case 'C':
-            return CHAR_TYPE
-        case 'B':
-            return BYTE_TYPE
-        case 'S':
-            return SHORT_TYPE
-        case 'I':
-            return INT_TYPE
-        case 'F':
-            return FLOAT_TYPE
-        case 'J':
-            return LONG_TYPE
-        case 'D':
-            return DOUBLE_TYPE
-        case '[':
-            len = 1
-            while (buf[off + len] == '[') {
-                ++len
+    private def getType(buf: Array[Char], off: Int): Type = {
+      var len: Int = 0
+      buf(off) match {
+        case 'V' => VOID_TYPE
+        case 'Z' => BOOLEAN_TYPE
+        case 'C' => CHAR_TYPE
+        case 'B' => BYTE_TYPE
+        case 'S' => SHORT_TYPE
+        case 'I' => INT_TYPE
+        case 'F' => FLOAT_TYPE
+        case 'J' => LONG_TYPE
+        case 'D' => DOUBLE_TYPE
+        case '[' =>
+          len = 1
+          while (buf(off + len) == '[') {
+            len += 1
+          }
+          if (buf(off + len) == 'L') {
+            len += 1
+            while (buf(off + len) != ';') {
+              len += 1
             }
-            if (buf[off + len] == 'L') {
-                ++len
-                while (buf[off + len] != '') {
-                    ++len
-                }
-            }
-            return new Type(ARRAY, buf, off, len + 1)
-        case 'L':
-            len = 1
-            while (buf[off + len] != '') {
-                ++len
-            }
-            return new Type(OBJECT, buf, off + 1, len - 1)
-            // case '(':
-        default:
-            return new Type(METHOD, buf, off, buf.length - off)
-        }
-    }*/
+          }
+          new Type(ARRAY, buf, off, len + 1)
+        case 'L' =>
+          len = 1
+          while (buf(off + len) != ';') {
+            len += 1
+          }
+          new Type(OBJECT, buf, off + 1, len - 1)
+        case _ =>
+          new Type(METHOD, buf, off, buf.length - off)
+      }
+    }
 
     def getInternalName(c: Class[_]): String =
         c.getName().replace('.', '/')
