@@ -91,34 +91,24 @@ class Item {
     }
 
     def set(type_ : Int, strVal1: String, strVal2: String,
-            strVal3: String): Unit = ???/*{
-        this.type_ = type
+            strVal3: String): Unit = {
+        this.type_ = type_
         this.strVal1 = strVal1
         this.strVal2 = strVal2
         this.strVal3 = strVal3
-        switch (type) {
-        case ClassWriter.CLASS:
-            this.intVal = 0     // intVal of a class must be zero, see visitInnerClass
-        case ClassWriter.UTF8:
-        case ClassWriter.STR:
-        case ClassWriter.MTYPE:
-        case ClassWriter.TYPE_NORMAL:
-            hashCode = 0x7FFFFFFF & (type + strVal1.hashCode())
-            return
-        case ClassWriter.NAME_TYPE: {
-            hashCode = 0x7FFFFFFF & (type + strVal1.hashCode()
-                    * strVal2.hashCode())
-            return
+
+        type_ match {
+          case ClassWriter.CLASS =>
+            this.intVal = 0 // intVal of a class must be zero, see visitInnerClass
+            hashCode_ = 0x7FFFFFFF & (type_ + strVal1.hashCode())
+          case ClassWriter.UTF8 | ClassWriter.STR | ClassWriter.MTYPE | ClassWriter.TYPE_NORMAL =>
+            hashCode_ = 0x7FFFFFFF & (type_ + strVal1.hashCode())
+          case ClassWriter.NAME_TYPE =>
+            hashCode_ = 0x7FFFFFFF & (type_ + strVal1.hashCode() * strVal2.hashCode())
+          case _ =>
+            hashCode_ = 0x7FFFFFFF & (type_ + strVal1.hashCode() * strVal2.hashCode() * strVal3.hashCode())
         }
-        // ClassWriter.FIELD:
-        // ClassWriter.METH:
-        // ClassWriter.IMETH:
-        // ClassWriter.HANDLE_BASE + 1..9
-        default:
-            hashCode = 0x7FFFFFFF & (type + strVal1.hashCode()
-                    * strVal2.hashCode() * strVal3.hashCode())
-        }
-    }*/
+    }
 
     def set(name: String, desc: String, bsmIndex: Int): Unit = {
         this.type_ = ClassWriter.INDY
