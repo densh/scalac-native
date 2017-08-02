@@ -35,15 +35,16 @@ class ByteVector(initialSize: Int) {
 
     def this() = this(64)
 
-    def putByte(b: Int): ByteVector = ???/*{
-        int length = this.length
+    def putByte(b: Int): ByteVector = {
+        var length = this.length
         if (length + 1 > data.length) {
             enlarge(1)
         }
-        data[length++] = (byte) b
+        data(length) = b.toByte
+        length += 1
         this.length = length
-        return this
-    }*/
+        this
+    }
 
     def put11(b1: Int, b2: Int): ByteVector = ???/*{
         int length = this.length
