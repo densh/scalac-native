@@ -657,15 +657,14 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
     }*/
 
-    override
-    def visitLabel(label: Label): Unit = ???/*{
+    override def visitLabel(label: Label): Unit = {
         // resolves previous forward references to label, if any
         resize |= label.resolve(this, code.length, code.data)
         // updates currentBlock
         if ((label.status & Label.DEBUG) != 0) {
             return
         }
-        if (compute == FRAMES) {
+        if (compute == MethodWriter.FRAMES) {
             if (currentBlock != null) {
                 if (label.position == currentBlock.position) {
                     // successive labels, do not start a new basic block
@@ -693,7 +692,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 previousBlock.successor = label
             }
             previousBlock = label
-        } else if (compute == MAXS) {
+        } else if (compute == MethodWriter.MAXS) {
             if (currentBlock != null) {
                 // ends current block (with one new successor)
                 currentBlock.outputStackMax = maxStackSize
@@ -710,7 +709,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             }
             previousBlock = label
         }
-    }*/
+    }
 
     override
     def visitLdcInsn(cst: Object): Unit = ???/*{
