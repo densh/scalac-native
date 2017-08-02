@@ -468,20 +468,20 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         return result.index
     }*/
 
-    def newClassItem(value: String): Item = ???/*{
-        key2.set(CLASS, value, null, null)
-        Item result = get(key2)
-        if (result == null) {
-            pool.put12(CLASS, newUTF8(value))
-            result = new Item(index++, key2)
-            put(result)
-        }
-        return result
-    }*/
+    def newClassItem(value: String): Item = {
+      key2.set(CLASS, value, null, null)
+      var result = get(key2)
+      if (result == null) {
+        pool.put12(CLASS, newUTF8(value))
+        result = new Item(index, key2)
+        index += 1
+        put(result)
+      }
+      result
+    }
 
-    def newClass(value: String): Int = ???/*{
-        return newClassItem(value).index
-    }*/
+    def newClass(value: String): Int =
+      newClassItem(value).index
 
     def newMethodTypeItem(methodDesc: String): Item = ???/*{
         key2.set(MTYPE, methodDesc, null, null)
