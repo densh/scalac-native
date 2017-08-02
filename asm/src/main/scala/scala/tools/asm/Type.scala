@@ -289,22 +289,26 @@ object Type {
     def getReturnType(method:Method ): Type =
         getType(method.getReturnType())
 
-    def getArgumentsAndReturnSizes(desc:String ): Int = ???/*{
-        int n = 1
-        int c = 1
-        while (true) {
-            char car = desc.charAt(c++)
+    def getArgumentsAndReturnSizes(desc:String ): Int = {
+        var n = 1
+        var c = 1
+        var continue = true
+        var result = 0
+        while (continue) {
+            var car = desc.charAt(c)
+            c += 1
             if (car == ')') {
                 car = desc.charAt(c)
-                return n << 2
-                        | (car == 'V' ? 0 : (car == 'D' || car == 'J' ? 2 : 1))
+                result = n << 2 | (if (car == 'V') 0 else if (car == 'D' || car == 'J') 2 else 0)
+                continue = false
             } else if (car == 'L') {
-                while (desc.charAt(c++) != '') {
+                while (desc.charAt(c) != ';') {
+                  c += 1
                 }
                 n += 1
             } else if (car == '[') {
-                while ((car = desc.charAt(c)) == '[') {
-                    ++c
+                while ({car = desc.charAt(c); car} == '[') {
+                    c += 1
                 }
                 if (car == 'D' || car == 'J') {
                     n -= 1
@@ -315,7 +319,8 @@ object Type {
                 n += 1
             }
         }
-    }*/
+        result
+    }
 
     private def getType(buf: Array[Char], off: Int): Type = {
       var len: Int = 0
