@@ -32,7 +32,10 @@ import scala.reflect.internal.util.Statistics
  *  ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
  */
 object Path {
-  def isExtensionJarOrZip(jfile: JFile): Boolean = isExtensionJarOrZip(jfile.getName)
+  def isExtensionJarOrZip(jfile: JFile): Boolean = ext2(jfile.getName)
+  private def ext2(name: String): Boolean = {
+    name.endsWith(".jar") || name.endsWith(".zip")
+  }
   def isExtensionJarOrZip(name: String): Boolean = {
     val ext = extension(name)
     ext == "jar" || ext == "zip"

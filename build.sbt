@@ -2,9 +2,9 @@ import scalanative.tools.LinkerReporter
 import scalanative.sbtplugin.ScalaNativePluginInternal.nativeLinkerReporter
 
 val shared = Seq(
-  scalaVersion := "2.11.11",
-  nativeLinkerReporter in Compile := LinkerReporter.toFile(
-      target.value / "out.dot")
+  scalaVersion := "2.11.11"
+  // nativeLinkerReporter in Compile := LinkerReporter.toFile(
+  //     target.value / "out.dot"),
 )
 
 lazy val asm =
