@@ -92,10 +92,9 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         this.cr = classReader
     }
 
-    override
-    def visit(version: Int, access: Int,
+    override def visit(version: Int, access: Int,
             name: String, signature: String, superName: String,
-            interfaces: Array[String]): Unit = ???/*{
+            interfaces: Array[String]): Unit = {
         this.version = version
         this.access = access
         this.name = newClass(name)
@@ -103,15 +102,11 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         if (ClassReader.SIGNATURES && signature != null) {
             this.signature = newUTF8(signature)
         }
-        this.superName = superName == null ? 0 : newClass(superName)
+        this.superName = if(superName == null) 0 else newClass(superName)
         if (interfaces != null && interfaces.length > 0) {
-            interfaceCount = interfaces.length
-            this.interfaces = new int[interfaceCount]
-            for (int i = 0 i < interfaceCount ++i) {
-                this.interfaces[i] = newClass(interfaces[i])
-            }
+            this.interfaces = interfaces.map(newClass)
         }
-    }*/
+    }
 
     override
     def visitSource(file: String, debug: String): Unit = {
