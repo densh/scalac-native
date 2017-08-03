@@ -152,31 +152,31 @@ class Frame {
         initializationCount += 1
     }
 
-    private def init(cw: ClassWriter , t: Int): Int = ??? /*{
-        int s
-        if (t == UNINITIALIZED_THIS) {
-            s = OBJECT | cw.addType(cw.thisName)
-        } else if ((t & (DIM | BASE_KIND)) == UNINITIALIZED) {
-            String type = cw.typeTable[t & BASE_VALUE].strVal1
-            s = OBJECT | cw.addType(type)
+    private def init(cw: ClassWriter , t: Int): Int = {
+        var s = 0
+        if (t == Frame.UNINITIALIZED_THIS) {
+            s = Frame.OBJECT | cw.addType(cw.thisName)
+        } else if ((t & (Frame.DIM | Frame.BASE_KIND)) == Frame.UNINITIALIZED) {
+            val type_ = cw.typeTable(t & Frame.BASE_VALUE).strVal1
+            s = Frame.OBJECT | cw.addType(type_)
         } else {
             return t
         }
-        for (int j = 0 j < initializationCount ++j) {
-            int u = initializations[j]
-            int dim = u & DIM
-            int kind = u & KIND
-            if (kind == LOCAL) {
-                u = dim + inputLocals[u & VALUE]
-            } else if (kind == STACK) {
-                u = dim + inputStack[inputStack.length - (u & VALUE)]
+        (0 until initializationCount).foreach { j =>
+            var u = initializations(j)
+            val dim = u & Frame.DIM
+            val kind = u & Frame.KIND
+            if (kind == Frame.LOCAL) {
+                u = dim + inputLocals(u & Frame.VALUE)
+            } else if (kind == Frame.STACK) {
+                u = dim + inputStack(inputStack.length - (u & Frame.VALUE))
             }
             if (t == u) {
                 return s
             }
         }
         return t
-    }*/
+    }
 
     def initInputFrame(cw: ClassWriter , access: Int,
             args: Array[Type], maxLocals: Int): Unit = {
