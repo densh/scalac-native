@@ -990,7 +990,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }
 
     override
-    def visitMaxs(maxStack: Int, maxLocals: Int): Unit = ???/*{
+    def visitMaxs(maxStack: Int, maxLocals: Int): Unit = {
         if (resize) {
             // replaces the temporary jump opcodes introduced by Label.resolve.
             if (ClassReader.RESIZE) {
@@ -999,23 +999,22 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 throw new RuntimeException("Method code too large!")
             }
         }
-        if (ClassReader.FRAMES && compute == FRAMES) {
+        if (ClassReader.FRAMES && compute == MethodWriter.FRAMES) {
             // completes the control flow graph with exception handler blocks
-            Handler handler = firstHandler
+            var handler = firstHandler
             while (handler != null) {
-                Label l = handler.start.getFirst()
-                Label h = handler.handler.getFirst()
-                Label e = handler.end.getFirst()
+                var l = handler.start.getFirst()
+                val h = handler.handler.getFirst()
+                val e = handler.end.getFirst()
                 // computes the kind of the edges to 'h'
-                String t = handler.desc == null ? "java/lang/Throwable"
-                        : handler.desc
-                int kind = Frame.OBJECT | cw.addType(t)
+                val t = if (handler.desc == null) "java/lang/Throwable" else handler.desc
+                val kind = Frame.OBJECT | cw.addType(t)
                 // h is an exception handler
                 h.status |= Label.TARGET
                 // adds 'h' as a successor of labels between 'start' and 'end'
                 while (l != e) {
                     // creates an edge to 'h'
-                    Edge b = new Edge()
+                    val b = new Edge()
                     b.info = kind
                     b.successor = h
                     // adds it to the successors of 'l'
@@ -1028,8 +1027,8 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             }
 
             // creates and visits the first (implicit) frame
-            Frame f = labels.frame
-            Type[] args = Type.getArgumentTypes(descriptor)
+            var f = labels.frame
+            val args = Type.getArgumentTypes(descriptor)
             f.initInputFrame(cw, access, args, this.maxLocals)
             visitFrame(f)
 
@@ -1039,11 +1038,11 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
              * basic blocks, choose one, mark it as unchanged, and update its
              * successors (which can be changed in the process).
              */
-            int max = 0
-            Label changed = labels
+            var max = 0
+            var changed = labels
             while (changed != null) {
                 // removes a basic block from the list of changed basic blocks
-                Label l = changed
+                val l = changed
                 changed = changed.next
                 l.next = null
                 f = l.frame
@@ -1054,15 +1053,15 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 // all visited labels are reachable, by definition
                 l.status |= Label.REACHABLE
                 // updates the (absolute) maximum stack size
-                int blockMax = f.inputStack.length + l.outputStackMax
+                val blockMax = f.inputStack.length + l.outputStackMax
                 if (blockMax > max) {
                     max = blockMax
                 }
                 // updates the successors of the current basic block
-                Edge e = l.successors
+                var e = l.successors
                 while (e != null) {
-                    Label n = e.successor.getFirst()
-                    boolean change = f.merge(cw, n.frame, e.info)
+                    val n = e.successor.getFirst()
+                    val change = f.merge(cw, n.frame, e.info)
                     if (change && n.next == null) {
                         // if n has changed and is not already in the 'changed'
                         // list, adds it to this list
@@ -1074,7 +1073,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             }
 
             // visits all the frames that must be stored in the stack map
-            Label l = labels
+            var l = labels
             while (l != null) {
                 f = l.frame
                 if ((l.status & Label.STORE) != 0) {
@@ -1082,21 +1081,20 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 }
                 if ((l.status & Label.REACHABLE) == 0) {
                     // finds start and end of dead basic block
-                    Label k = l.successor
-                    int start = l.position
-                    int end = (k == null ? code.length : k.position) - 1
+                    val k = l.successor
+                    val start = l.position
+                    val end = (if (k == null) code.length else k.position) - 1
                     // if non empty basic block
                     if (end >= start) {
                         max = Math.max(max, 1)
                         // replaces instructions with NOP ... NOP ATHROW
-                        for (int i = start i < end ++i) {
-                            code.data(i) = Opcodes.NOP
+                        (start until end).foreach { i =>
+                          code.data(i) = Opcodes.NOP
                         }
-                        code.data[end] = (byte) Opcodes.ATHROW
+                        code.data(end) = Opcodes.ATHROW.toByte
                         // emits a frame for this unreachable block
-                        int frameIndex = startFrame(start, 0, 1)
-                        frame[frameIndex] = Frame.OBJECT
-                                | cw.addType("java/lang/Throwable")
+                        val frameIndex = startFrame(start, 0, 1)
+                        frame(frameIndex) = Frame.OBJECT | cw.addType("java/lang/Throwable")
                         endFrame()
                         // removes the start-end range from the exception
                         // handlers
@@ -1114,17 +1112,17 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             }
 
             this.maxStack = max
-        } else if (compute == MAXS) {
+        } else if (compute == MethodWriter.MAXS) {
             // completes the control flow graph with exception handler blocks
-            Handler handler = firstHandler
+            var handler = firstHandler
             while (handler != null) {
-                Label l = handler.start
-                Label h = handler.handler
-                Label e = handler.end
+                var l = handler.start
+                val h = handler.handler
+                val e = handler.end
                 // adds 'h' as a successor of labels between 'start' and 'end'
                 while (l != e) {
                     // creates an edge to 'h'
-                    Edge b = new Edge()
+                    val b = new Edge()
                     b.info = Edge.EXCEPTION
                     b.successor = h
                     // adds it to the successors of 'l'
@@ -1151,14 +1149,14 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                  * each basic block, to which subroutine(s) it belongs.
                  */
                 // finds the basic blocks that belong to the "main" subroutine
-                int id = 0
+                var id = 0
                 labels.visitSubroutine(null, 1, subroutines)
                 // finds the basic blocks that belong to the real subroutines
-                Label l = labels
+                var l = labels
                 while (l != null) {
                     if ((l.status & Label.JSR) != 0) {
                         // the subroutine is defined by l's TARGET, not by l
-                        Label subroutine = l.successors.next.successor
+                        val subroutine = l.successors.next.successor
                         // if this subroutine has not been visited yet...
                         if ((subroutine.status & Label.VISITED) == 0) {
                             // ...assigns it a new id and finds its basic blocks
@@ -1173,13 +1171,13 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 l = labels
                 while (l != null) {
                     if ((l.status & Label.JSR) != 0) {
-                        Label L = labels
+                        var L = labels
                         while (L != null) {
                             L.status &= ~Label.VISITED2
                             L = L.successor
                         }
                         // the subroutine is defined by l's TARGET, not by l
-                        Label subroutine = l.successors.next.successor
+                        val subroutine = l.successors.next.successor
                         subroutine.visitSubroutine(l, 0, subroutines)
                     }
                     l = l.successor
@@ -1196,21 +1194,21 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
              * blocks in the block stack are the true (non relative) beginning
              * stack sizes of these blocks.
              */
-            int max = 0
-            Label stack = labels
+            var max = 0
+            var stack = labels
             while (stack != null) {
                 // pops a block from the stack
-                Label l = stack
+                var l = stack
                 stack = stack.next
                 // computes the true (non relative) max stack size of this block
-                int start = l.inputStackTop
-                int blockMax = start + l.outputStackMax
+                val start = l.inputStackTop
+                val blockMax = start + l.outputStackMax
                 // updates the global max stack size
                 if (blockMax > max) {
                     max = blockMax
                 }
                 // analyzes the successors of the block
-                Edge b = l.successors
+                var b = l.successors
                 if ((l.status & Label.JSR) != 0) {
                     // ignores the first edge of JSR blocks (virtual successor)
                     b = b.next
@@ -1220,8 +1218,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                     // if this successor has not already been pushed...
                     if ((l.status & Label.PUSHED) == 0) {
                         // computes its true beginning stack size...
-                        l.inputStackTop = b.info == Edge.EXCEPTION ? 1 : start
-                                + b.info
+                        l.inputStackTop = if (b.info == Edge.EXCEPTION) 1 else start + b.info
                         // ...and pushes it onto the stack
                         l.status |= Label.PUSHED
                         l.next = stack
@@ -1235,7 +1232,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             this.maxStack = maxStack
             this.maxLocals = maxLocals
         }
-    }*/
+    }
 
     override
     def visitEnd(): Unit = ()
