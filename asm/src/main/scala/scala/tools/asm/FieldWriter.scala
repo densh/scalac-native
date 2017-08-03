@@ -156,38 +156,37 @@ class FieldWriter extends FieldVisitor(Opcodes.ASM5) {
         size
     }
 
-    def put(out: ByteVector): Unit = ???/*{
-        int FACTOR = ClassWriter.TO_ACC_SYNTHETIC
-        int mask = Opcodes.ACC_DEPRECATED | ClassWriter.ACC_SYNTHETIC_ATTRIBUTE
-                | ((access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) / FACTOR)
+    def put(out: ByteVector): Unit = {
+        val FACTOR = ClassWriter.TO_ACC_SYNTHETIC
+        val mask = Opcodes.ACC_DEPRECATED | ClassWriter.ACC_SYNTHETIC_ATTRIBUTE | ((access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) / FACTOR)
         out.putShort(access & ~mask).putShort(name).putShort(desc)
-        int attributeCount = 0
+        var attributeCount = 0
         if (value != 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
             if ((cw.version & 0xFFFF) < Opcodes.V1_5
                     || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
-                ++attributeCount
+                attributeCount += 1
             }
         }
         if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.SIGNATURES && signature != 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && anns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && ianns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && tanns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && itanns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (attrs != null) {
             attributeCount += attrs.getCount()
@@ -229,5 +228,5 @@ class FieldWriter extends FieldVisitor(Opcodes.ASM5) {
         if (attrs != null) {
             attrs.put(cw, null, 0, -1, -1, out)
         }
-    }*/
+    }
 }
