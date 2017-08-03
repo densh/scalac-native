@@ -218,89 +218,89 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
     override
     def visitEnd(): Unit = ()
 
-    def toByteArray(): Array[Byte] = ???/*{
+    def toByteArray(): Array[Byte] = {
         if (index > 0xFFFF) {
             throw new RuntimeException("Class file too large!")
         }
         // computes the real size of the bytecode of this class
-        int size = 24 + 2 * interfaceCount
-        int nbFields = 0
-        FieldWriter fb = firstField
+        var size = 24 + 2 * interfaceCount
+        var nbFields = 0
+        var fb = firstField
         while (fb != null) {
-            ++nbFields
+            nbFields += 1
             size += fb.getSize()
-            fb = (FieldWriter) fb.fv
+            fb = fb.fv.asInstanceOf[FieldWriter]
         }
-        int nbMethods = 0
-        MethodWriter mb = firstMethod
+        var nbMethods = 0
+        var mb = firstMethod
         while (mb != null) {
-            ++nbMethods
+            nbMethods += 1
             size += mb.getSize()
-            mb = (MethodWriter) mb.mv
+            mb = mb.mv.asInstanceOf[MethodWriter]
         }
-        int attributeCount = 0
+        var attributeCount = 0
         if (bootstrapMethods != null) {
             // we put it as first attribute in order to improve a bit
             // ClassReader.copyBootstrapMethods
-            ++attributeCount
+            attributeCount += 1
             size += 8 + bootstrapMethods.length
             newUTF8("BootstrapMethods")
         }
         if (ClassReader.SIGNATURES && signature != 0) {
-            ++attributeCount
+            attributeCount += 1
             size += 8
             newUTF8("Signature")
         }
         if (sourceFile != 0) {
-            ++attributeCount
+            attributeCount += 1
             size += 8
             newUTF8("SourceFile")
         }
         if (sourceDebug != null) {
-            ++attributeCount
+            attributeCount += 1
             size += sourceDebug.length + 6
             newUTF8("SourceDebugExtension")
         }
         if (enclosingMethodOwner != 0) {
-            ++attributeCount
+            attributeCount += 1
             size += 10
             newUTF8("EnclosingMethod")
         }
         if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-            ++attributeCount
+            attributeCount += 1
             size += 6
             newUTF8("Deprecated")
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
             if ((version & 0xFFFF) < Opcodes.V1_5
                     || (access & ACC_SYNTHETIC_ATTRIBUTE) != 0) {
-                ++attributeCount
+                attributeCount += 1
                 size += 6
                 newUTF8("Synthetic")
             }
         }
         if (innerClasses != null) {
-            ++attributeCount
+            attributeCount += 1
             size += 8 + innerClasses.length
             newUTF8("InnerClasses")
         }
         if (ClassReader.ANNOTATIONS && anns != null) {
-            ++attributeCount
+            attributeCount += 1
             size += 8 + anns.getSize()
             newUTF8("RuntimeVisibleAnnotations")
         }
         if (ClassReader.ANNOTATIONS && ianns != null) {
-            ++attributeCount
+            attributeCount += 1
             size += 8 + ianns.getSize()
             newUTF8("RuntimeInvisibleAnnotations")
         }
         if (ClassReader.ANNOTATIONS && tanns != null) {
-            ++attributeCount
+            attributeCount += 1
             size += 8 + tanns.getSize()
             newUTF8("RuntimeVisibleTypeAnnotations")
         }
         if (ClassReader.ANNOTATIONS && itanns != null) {
-            ++attributeCount
+            attributeCount += 1
             size += 8 + itanns.getSize()
             newUTF8("RuntimeInvisibleTypeAnnotations")
         }
@@ -311,27 +311,24 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         size += pool.length
         // allocates a byte vector of this size, in order to avoid unnecessary
         // arraycopy operations in the ByteVector.enlarge() method
-        ByteVector out = new ByteVector(size)
+        val out = new ByteVector(size)
         out.putInt(0xCAFEBABE).putInt(version)
         out.putShort(index).putByteArray(pool.data, 0, pool.length)
-        int mask = Opcodes.ACC_DEPRECATED | ACC_SYNTHETIC_ATTRIBUTE
-                | ((access & ACC_SYNTHETIC_ATTRIBUTE) / TO_ACC_SYNTHETIC)
+        val mask = Opcodes.ACC_DEPRECATED | ACC_SYNTHETIC_ATTRIBUTE | ((access & ACC_SYNTHETIC_ATTRIBUTE) / TO_ACC_SYNTHETIC)
         out.putShort(access & ~mask).putShort(name).putShort(superName)
         out.putShort(interfaceCount)
-        for (int i = 0 i < interfaceCount ++i) {
-            out.putShort(interfaces[i])
-        }
+        interfaces.foreach(out.putShort)
         out.putShort(nbFields)
         fb = firstField
         while (fb != null) {
             fb.put(out)
-            fb = (FieldWriter) fb.fv
+            fb = fb.fv.asInstanceOf[FieldWriter]
         }
         out.putShort(nbMethods)
         mb = firstMethod
         while (mb != null) {
             mb.put(out)
-            mb = (MethodWriter) mb.mv
+            mb = mb.mv.asInstanceOf[MethodWriter]
         }
         out.putShort(attributeCount)
         if (bootstrapMethods != null) {
@@ -347,7 +344,7 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
             out.putShort(newUTF8("SourceFile")).putInt(2).putShort(sourceFile)
         }
         if (sourceDebug != null) {
-            int len = sourceDebug.length
+            val len = sourceDebug.length
             out.putShort(newUTF8("SourceDebugExtension")).putInt(len)
             out.putByteArray(sourceDebug.data, 0, len)
         }
@@ -406,8 +403,8 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
             new ClassReader(out.data).accept(this, ClassReader.SKIP_FRAMES)
             return toByteArray()
         }
-        return out.data
-    }*/
+        out.data
+    }
 
     def newConstItem(cst: Any): Item = ???/*{
         if (cst instanceof Integer) {
