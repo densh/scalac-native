@@ -685,16 +685,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
     def newNameType(name: String, desc: String): Int =
         newNameTypeItem(name, desc).index
 
-    def newNameTypeItem(name: String, desc: String): Item = ???/*{
+    def newNameTypeItem(name: String, desc: String): Item = {
         key2.set(NAME_TYPE, name, desc, null)
-        Item result = get(key2)
+        var result = get(key2)
         if (result == null) {
             put122(NAME_TYPE, newUTF8(name), newUTF8(desc))
-            result = new Item(index++, key2)
+            result = new Item(index, key2)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def addType(type_ : String): Int = ???/*{
         key.set(TYPE_NORMAL, type, null, null)
