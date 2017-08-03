@@ -1668,65 +1668,63 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         size
     }
 
-    def put(out: ByteVector): Unit = ???/*{
-        int FACTOR = ClassWriter.TO_ACC_SYNTHETIC
-        int mask = ACC_CONSTRUCTOR | Opcodes.ACC_DEPRECATED
-                | ClassWriter.ACC_SYNTHETIC_ATTRIBUTE
-                | ((access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) / FACTOR)
+    def put(out: ByteVector): Unit = {
+        val FACTOR = ClassWriter.TO_ACC_SYNTHETIC
+        val mask = MethodWriter.ACC_CONSTRUCTOR | Opcodes.ACC_DEPRECATED | ClassWriter.ACC_SYNTHETIC_ATTRIBUTE | ((access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) / FACTOR)
         out.putShort(access & ~mask).putShort(name).putShort(desc)
         if (classReaderOffset != 0) {
             out.putByteArray(cw.cr.b, classReaderOffset, classReaderLength)
             return
         }
-        int attributeCount = 0
+        var attributeCount = 0
         if (code.length > 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (exceptionCount > 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if ((access & Opcodes.ACC_SYNTHETIC) != 0) {
             if ((cw.version & 0xFFFF) < Opcodes.V1_5
                     || (access & ClassWriter.ACC_SYNTHETIC_ATTRIBUTE) != 0) {
-                ++attributeCount
+                attributeCount += 1
             }
         }
         if ((access & Opcodes.ACC_DEPRECATED) != 0) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.SIGNATURES && signature != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (methodParameters != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && annd != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && anns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && ianns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && tanns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && itanns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && panns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (ClassReader.ANNOTATIONS && ipanns != null) {
-            ++attributeCount
+            attributeCount += 1
         }
         if (attrs != null) {
             attributeCount += attrs.getCount()
         }
         out.putShort(attributeCount)
         if (code.length > 0) {
-            int size = 12 + code.length + 8 * handlerCount
+            var size = 12 + code.length + 8 * handlerCount
             if (localVar != null) {
                 size += 8 + localVar.length
             }
@@ -1754,31 +1752,31 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             out.putInt(code.length).putByteArray(code.data, 0, code.length)
             out.putShort(handlerCount)
             if (handlerCount > 0) {
-                Handler h = firstHandler
+                var h = firstHandler
                 while (h != null) {
                     out.putShort(h.start.position).putShort(h.end.position)
-                            .putShort(h.handler.position).putShort(h.type)
+                            .putShort(h.handler.position).putShort(h.type_)
                     h = h.next
                 }
             }
             attributeCount = 0
             if (localVar != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (localVarType != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (lineNumber != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (stackMap != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (ClassReader.ANNOTATIONS && ctanns != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (ClassReader.ANNOTATIONS && ictanns != null) {
-                ++attributeCount
+                attributeCount += 1
             }
             if (cattrs != null) {
                 attributeCount += cattrs.getCount()
@@ -1800,8 +1798,8 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 out.putByteArray(lineNumber.data, 0, lineNumber.length)
             }
             if (stackMap != null) {
-                boolean zip = (cw.version & 0xFFFF) >= Opcodes.V1_6
-                out.putShort(cw.newUTF8(zip ? "StackMapTable" : "StackMap"))
+                val zip = (cw.version & 0xFFFF) >= Opcodes.V1_6
+                out.putShort(cw.newUTF8(if (zip) "StackMapTable" else "StackMap"))
                 out.putInt(stackMap.length + 2).putShort(frameCount)
                 out.putByteArray(stackMap.data, 0, stackMap.length)
             }
@@ -1821,7 +1819,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             out.putShort(cw.newUTF8("Exceptions")).putInt(
                     2 * exceptionCount + 2)
             out.putShort(exceptionCount)
-            for (int i = 0 i < exceptionCount ++i) {
+            (0 until exceptionCount).foreach { i =>
                 out.putShort(exceptions(i))
             }
         }
@@ -1876,7 +1874,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         if (attrs != null) {
             attrs.put(cw, null, 0, -1, -1, out)
         }
-    }*/
+    }
 
     private def resizeInstructions(): Unit = ???/*{
         byte[] b = code.data // bytecode of the method
