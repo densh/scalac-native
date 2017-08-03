@@ -113,8 +113,8 @@ class FieldWriter extends FieldVisitor(Opcodes.ASM5) {
     override
     def visitEnd(): Unit = ()
 
-    def getSize(): Int = ???/*{
-        int size = 8
+    def getSize(): Int = {
+        var size = 8
         if (value != 0) {
             cw.newUTF8("ConstantValue")
             size += 8
@@ -153,8 +153,8 @@ class FieldWriter extends FieldVisitor(Opcodes.ASM5) {
         if (attrs != null) {
             size += attrs.getSize(cw, null, 0, -1, -1)
         }
-        return size
-    }*/
+        size
+    }
 
     def put(out: ByteVector): Unit = ???/*{
         int FACTOR = ClassWriter.TO_ACC_SYNTHETIC
