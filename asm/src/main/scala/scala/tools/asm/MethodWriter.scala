@@ -1556,15 +1556,15 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
     }*/
 
-    def getSize(): Int = ??? /*{
+    def getSize(): Int = {
         if (classReaderOffset != 0) {
             return 6 + classReaderLength
         }
-        int size = 8
+        var size = 8
         if (code.length > 0) {
             if (code.length > 65535) {
-                String nameString = ""
-                Item nameItem = cw.findItemByIndex(name)
+                var nameString = ""
+                val nameItem = cw.findItemByIndex(name)
                 if (nameItem != null) nameString = nameItem.strVal1 +"'s "
                 throw new RuntimeException("Method "+ nameString +"code too large!")
             }
@@ -1583,8 +1583,8 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 size += 8 + lineNumber.length
             }
             if (stackMap != null) {
-                boolean zip = (cw.version & 0xFFFF) >= Opcodes.V1_6
-                cw.newUTF8(zip ? "StackMapTable" : "StackMap")
+                val zip = (cw.version & 0xFFFF) >= Opcodes.V1_6
+                cw.newUTF8(if (zip) "StackMapTable" else "StackMap")
                 size += 8 + stackMap.length
             }
             if (ClassReader.ANNOTATIONS && ctanns != null) {
@@ -1647,22 +1647,26 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         if (ClassReader.ANNOTATIONS && panns != null) {
             cw.newUTF8("RuntimeVisibleParameterAnnotations")
             size += 7 + 2 * (panns.length - synthetics)
-            for (int i = panns.length - 1 i >= synthetics --i) {
-                size += panns(i) == null ? 0 : panns(i).getSize()
+            var i = panns.length - 1
+            while (i >= synthetics) {
+                size += (if (panns(i) == null) 0 else panns(i).getSize())
+                i -= 1
             }
         }
         if (ClassReader.ANNOTATIONS && ipanns != null) {
             cw.newUTF8("RuntimeInvisibleParameterAnnotations")
             size += 7 + 2 * (ipanns.length - synthetics)
-            for (int i = ipanns.length - 1 i >= synthetics --i) {
-                size += ipanns(i) == null ? 0 : ipanns(i).getSize()
+            var i = ipanns.length - 1
+            while (i >= synthetics) {
+                size += (if (ipanns(i) == null) 0 else ipanns(i).getSize())
+                i -= 1
             }
         }
         if (attrs != null) {
             size += attrs.getSize(cw, null, 0, -1, -1)
         }
-        return size
-    }*/
+        size
+    }
 
     def put(out: ByteVector): Unit = ???/*{
         int FACTOR = ClassWriter.TO_ACC_SYNTHETIC
