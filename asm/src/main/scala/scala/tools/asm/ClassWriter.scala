@@ -697,14 +697,14 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         result
     }
 
-    def addType(type_ : String): Int = ???/*{
-        key.set(TYPE_NORMAL, type, null, null)
-        Item result = get(key)
+    def addType(type_ : String): Int = {
+        key.set(TYPE_NORMAL, type_, null, null)
+        var result = get(key)
         if (result == null) {
             result = addType(key)
         }
-        return result.index
-    }*/
+        result.index
+    }
 
     def addUninitializedType(type_ : String, offset: Int): Int = {
         key.type_ = TYPE_UNINIT
