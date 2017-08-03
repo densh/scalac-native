@@ -299,7 +299,7 @@ object Type {
             c += 1
             if (car == ')') {
                 car = desc.charAt(c)
-                result = n << 2 | (if (car == 'V') 0 else if (car == 'D' || car == 'J') 2 else 0)
+                result = n << 2 | (if (car == 'V') 0 else if (car == 'D' || car == 'J') 2 else 1)
                 continue = false
             } else if (car == 'L') {
                 while (desc.charAt(c) != ';') {
