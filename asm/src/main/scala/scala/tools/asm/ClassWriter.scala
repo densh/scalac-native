@@ -317,7 +317,9 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         val mask = Opcodes.ACC_DEPRECATED | ACC_SYNTHETIC_ATTRIBUTE | ((access & ACC_SYNTHETIC_ATTRIBUTE) / TO_ACC_SYNTHETIC)
         out.putShort(access & ~mask).putShort(name).putShort(superName)
         out.putShort(interfaceCount)
-        interfaces.foreach(out.putShort)
+        (0 until interfaceCount).foreach { i =>
+          out.putShort(interfaces(i))
+        }
         out.putShort(nbFields)
         fb = firstField
         while (fb != null) {
