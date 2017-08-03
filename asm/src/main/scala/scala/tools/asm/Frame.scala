@@ -39,21 +39,22 @@ class Frame {
     private var initializationCount: Int = _
     private var initializations: Array[Int] = _
 
-    private def get(local: Int): Int = ???/*{
+    private def get(local: Int): Int = {
         if (outputLocals == null || local >= outputLocals.length) {
             // this local has never been assigned in this basic block,
             // so it is still equal to its value in the input frame
-            return LOCAL | local
+            Frame.LOCAL | local
         } else {
-            int type = outputLocals[local]
-            if (type == 0) {
+            var _type = outputLocals(local)
+            if (_type == 0) {
                 // this local has never been assigned in this basic block,
                 // so it is still equal to its value in the input frame
-                type = outputLocals[local] = LOCAL | local
+                outputLocals(local) = Frame.LOCAL | local
+                _type = Frame.LOCAL | local
             }
-            return type
+            _type
         }
-    }*/
+    }
 
     private def set(local: Int, type_ : Int): Unit = ???/*{
         // creates and/or resizes the output local variables array if necessary
