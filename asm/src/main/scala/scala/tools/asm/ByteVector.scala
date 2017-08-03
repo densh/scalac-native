@@ -204,7 +204,7 @@ class ByteVector(initialSize: Int) {
         return this
     }*/
 
-    def putByteArray(b: Array[Byte], off: Int, len: Int): ByteVector = ???/*{
+    def putByteArray(b: Array[Byte], off: Int, len: Int): ByteVector = {
         if (length + len > data.length) {
             enlarge(len)
         }
@@ -212,8 +212,8 @@ class ByteVector(initialSize: Int) {
             System.arraycopy(b, off, data, length, len)
         }
         length += len
-        return this
-    }*/
+        this
+    }
 
     private def enlarge(size: Int): Unit = {
         val length1 = 2 * data.length
