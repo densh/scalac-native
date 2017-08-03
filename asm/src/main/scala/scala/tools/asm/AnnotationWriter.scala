@@ -160,15 +160,15 @@ class AnnotationWriter extends AnnotationVisitor(Opcodes.ASM5) {
         }
     }
 
-    def getSize(): Int = ???/*{
-        int size = 0
-        AnnotationWriter aw = this
+    def getSize(): Int = {
+        var size = 0
+        var aw = this
         while (aw != null) {
             size += aw.bv.length
             aw = aw.next
         }
-        return size
-    }*/
+        size
+    }
 
     def put(out: ByteVector): Unit = ???/*{
         int n = 0
