@@ -170,13 +170,13 @@ class AnnotationWriter extends AnnotationVisitor(Opcodes.ASM5) {
         size
     }
 
-    def put(out: ByteVector): Unit = ???/*{
-        int n = 0
-        int size = 2
-        AnnotationWriter aw = this
-        AnnotationWriter last = null
+    def put(out: ByteVector): Unit = {
+        var n = 0
+        var size = 2
+        var aw = this
+        var last: AnnotationWriter = null
         while (aw != null) {
-            ++n
+            n += 1
             size += aw.bv.length
             aw.visitEnd() // in case user forgot to call visitEnd
             aw.prev = last
@@ -190,7 +190,7 @@ class AnnotationWriter extends AnnotationVisitor(Opcodes.ASM5) {
             out.putByteArray(aw.bv.data, 0, aw.bv.length)
             aw = aw.prev
         }
-    }*/
+    }
 }
 
 
