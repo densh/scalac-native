@@ -470,31 +470,27 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
 
     override
     def visitFieldInsn(opcode: Int, owner: String,
-            name: String, desc: String): Unit = ???/*{
+            name: String, desc: String): Unit = {
         lastCodeOffset = code.length
-        Item i = cw.newFieldItem(owner, name, desc)
+        val i = cw.newFieldItem(owner, name, desc)
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(opcode, 0, cw, i)
             } else {
-                int size
+                var size = 0
                 // computes the stack size variation
-                char c = desc.charAt(0)
-                switch (opcode) {
-                case Opcodes.GETSTATIC:
-                    size = stackSize + (c == 'D' || c == 'J' ? 2 : 1)
-                    break
-                case Opcodes.PUTSTATIC:
-                    size = stackSize + (c == 'D' || c == 'J' ? -2 : -1)
-                    break
-                case Opcodes.GETFIELD:
-                    size = stackSize + (c == 'D' || c == 'J' ? 1 : 0)
-                    break
+                val c = desc.charAt(0)
+                opcode match {
+                  case Opcodes.GETSTATIC =>
+                    size = stackSize + (if (c == 'D' || c == 'J') 2 else 1)
+                  case Opcodes.PUTSTATIC =>
+                    size = stackSize + (if (c == 'D' || c == 'J') -2 else -1)
+                  case Opcodes.GETFIELD =>
+                    size = stackSize + (if (c == 'D' || c == 'J') 1 else 0)
                 // case Constants.PUTFIELD:
-                default:
-                    size = stackSize + (c == 'D' || c == 'J' ? -3 : -2)
-                    break
+                  case _ =>
+                    size = stackSize + (if (c == 'D' || c == 'J') -3 else -2)
                 }
                 // updates current and max stack sizes
                 if (size > maxStackSize) {
@@ -505,7 +501,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
         // adds the instruction to the bytecode of the method
         code.put12(opcode, i.index)
-    }*/
+    }
 
     override
     def visitMethodInsn(opcode: Int, owner: String,
