@@ -447,17 +447,17 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }
 
     override
-    def visitTypeInsn(opcode: Int, type_ : String): Unit = ???/*{
+    def visitTypeInsn(opcode: Int, type_ : String): Unit = {
         lastCodeOffset = code.length
-        Item i = cw.newClassItem(type)
+        val i = cw.newClassItem(type_)
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(opcode, code.length, cw, i)
             } else if (opcode == Opcodes.NEW) {
                 // updates current and max stack sizes only if opcode == NEW
                 // (no stack change for ANEWARRAY, CHECKCAST, INSTANCEOF)
-                int size = stackSize + 1
+                val size = stackSize + 1
                 if (size > maxStackSize) {
                     maxStackSize = size
                 }
@@ -466,7 +466,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
         // adds the instruction to the bytecode of the method
         code.put12(opcode, i.index)
-    }*/
+    }
 
     override
     def visitFieldInsn(opcode: Int, owner: String,
