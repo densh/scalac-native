@@ -813,70 +813,58 @@ object Frame {
         // System.err.println()
     }
 
-    def type_(cw: ClassWriter, desc: String): Int = ???/*{
-        String t
-        int index = desc.charAt(0) == '(' ? desc.indexOf(')') + 1 : 0
-        switch (desc.charAt(index)) {
-        case 'V':
-            return 0
-        case 'Z':
-        case 'C':
-        case 'B':
-        case 'S':
-        case 'I':
+    def type_(cw: ClassWriter, desc: String): Int = {
+      var t = ""
+      val index = if (desc.charAt(0) == '(') desc.indexOf(')') + 1 else 0
+      desc.charAt(index) match {
+        case 'V' =>
+            0
+        case 'Z' | 'C' | 'B' | 'S' | 'I' =>
             return INTEGER
-        case 'F':
+        case 'F' =>
             return FLOAT
-        case 'J':
+        case 'J' =>
             return LONG
-        case 'D':
+        case 'D' =>
             return DOUBLE
-        case 'L':
+        case 'L' =>
             // stores the internal name, not the descriptor!
             t = desc.substring(index + 1, desc.length() - 1)
-            return OBJECT | cw.addType(t)
+            OBJECT | cw.addType(t)
             // case '[':
-        default:
+        case _ =>
             // extracts the dimensions and the element type
-            int data
-            int dims = index + 1
+            var data = 0
+            var dims = index + 1
             while (desc.charAt(dims) == '[') {
-                ++dims
+                dims += 1
             }
-            switch (desc.charAt(dims)) {
-            case 'Z':
+            desc.charAt(dims) match {
+              case 'Z' =>
                 data = BOOLEAN
-                break
-            case 'C':
+              case 'C' =>
                 data = CHAR
-                break
-            case 'B':
+              case 'B' =>
                 data = BYTE
-                break
-            case 'S':
+              case 'S' =>
                 data = SHORT
-                break
-            case 'I':
+              case 'I' =>
                 data = INTEGER
-                break
-            case 'F':
+              case 'F' =>
                 data = FLOAT
-                break
-            case 'J':
+              case 'J' =>
                 data = LONG
-                break
-            case 'D':
+              case 'D' =>
                 data = DOUBLE
-                break
             // case 'L':
-            default:
+              case _ =>
                 // stores the internal name, not the descriptor
                 t = desc.substring(dims + 1, desc.length() - 1)
                 data = OBJECT | cw.addType(t)
             }
-            return (dims - index) << 28 | data
+            (dims - index) << 28 | data
         }
-    }*/
+    }
 
     def merge(cw: ClassWriter , t: Int,
             types: Array[Int], index: Int): Boolean = ??? /*{
