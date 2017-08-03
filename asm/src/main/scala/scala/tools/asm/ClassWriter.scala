@@ -608,17 +608,18 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         newFieldItem(owner, name, desc).index
 
     def newMethodItem(owner: String, name: String,
-            desc: String, itf: Boolean): Item = ???/*{
-        int type = itf ? IMETH : METH
-        key3.set(type, owner, name, desc)
-        Item result = get(key3)
+            desc: String, itf: Boolean): Item = {
+        val type_ = if (itf) IMETH else METH
+        key3.set(type_, owner, name, desc)
+        var result = get(key3)
         if (result == null) {
-            put122(type, newClass(owner), newNameType(name, desc))
-            result = new Item(index++, key3)
+            put122(type_, newClass(owner), newNameType(name, desc))
+            result = new Item(index, key3)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newMethod(owner: String, name: String,
             desc: String, itf: Boolean): Int =
