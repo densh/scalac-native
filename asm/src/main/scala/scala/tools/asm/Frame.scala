@@ -198,117 +198,77 @@ class Frame {
         }
     }*/
 
-    def execute(opcode: Int, arg: Int, cw: ClassWriter, item: Item): Unit = ??? /*{
-        int t1, t2, t3, t4
-        switch (opcode) {
-        case Opcodes.NOP:
-        case Opcodes.INEG:
-        case Opcodes.LNEG:
-        case Opcodes.FNEG:
-        case Opcodes.DNEG:
-        case Opcodes.I2B:
-        case Opcodes.I2C:
-        case Opcodes.I2S:
-        case Opcodes.GOTO:
-        case Opcodes.RETURN:
-            break
-        case Opcodes.ACONST_NULL:
-            push(NULL)
-            break
-        case Opcodes.ICONST_M1:
-        case Opcodes.ICONST_0:
-        case Opcodes.ICONST_1:
-        case Opcodes.ICONST_2:
-        case Opcodes.ICONST_3:
-        case Opcodes.ICONST_4:
-        case Opcodes.ICONST_5:
-        case Opcodes.BIPUSH:
-        case Opcodes.SIPUSH:
-        case Opcodes.ILOAD:
+    def execute(opcode: Int, arg: Int, cw: ClassWriter, item: Item): Unit = {
+      import Frame._
+      var t1, t2, t3, t4 = 0
+      opcode match {
+        case Opcodes.NOP | Opcodes.INEG | Opcodes.LNEG | Opcodes.FNEG | Opcodes.DNEG | Opcodes.I2B | Opcodes.I2C | Opcodes.I2S | Opcodes.GOTO | Opcodes.RETURN => ()
+
+        case Opcodes.ACONST_NULL =>
+          push(NULL)
+        case Opcodes.ICONST_M1 | Opcodes.ICONST_0 | Opcodes.ICONST_1 | Opcodes.ICONST_2 | Opcodes.ICONST_3 | Opcodes.ICONST_4 | Opcodes.ICONST_5 | Opcodes.BIPUSH | Opcodes.SIPUSH | Opcodes.ILOAD =>
             push(INTEGER)
-            break
-        case Opcodes.LCONST_0:
-        case Opcodes.LCONST_1:
-        case Opcodes.LLOAD:
+
+        case Opcodes.LCONST_0 | Opcodes.LCONST_1 | Opcodes.LLOAD =>
             push(LONG)
             push(TOP)
-            break
-        case Opcodes.FCONST_0:
-        case Opcodes.FCONST_1:
-        case Opcodes.FCONST_2:
-        case Opcodes.FLOAD:
+
+        case Opcodes.FCONST_0 | Opcodes.FCONST_1 | Opcodes.FCONST_2 | Opcodes.FLOAD =>
             push(FLOAT)
-            break
-        case Opcodes.DCONST_0:
-        case Opcodes.DCONST_1:
-        case Opcodes.DLOAD:
+
+        case Opcodes.DCONST_0 | Opcodes.DCONST_1 | Opcodes.DLOAD =>
             push(DOUBLE)
             push(TOP)
-            break
-        case Opcodes.LDC:
-            switch (item.type) {
-            case ClassWriter.INT:
+
+        case Opcodes.LDC =>
+            item.type_ match {
+              case ClassWriter.INT =>
                 push(INTEGER)
-                break
-            case ClassWriter.LONG:
+              case ClassWriter.LONG =>
                 push(LONG)
                 push(TOP)
-                break
-            case ClassWriter.FLOAT:
+              case ClassWriter.FLOAT =>
                 push(FLOAT)
-                break
-            case ClassWriter.DOUBLE:
+              case ClassWriter.DOUBLE =>
                 push(DOUBLE)
                 push(TOP)
-                break
-            case ClassWriter.CLASS:
+              case ClassWriter.CLASS =>
                 push(OBJECT | cw.addType("java/lang/Class"))
-                break
-            case ClassWriter.STR:
+              case ClassWriter.STR =>
                 push(OBJECT | cw.addType("java/lang/String"))
-                break
-            case ClassWriter.MTYPE:
+              case ClassWriter.MTYPE =>
                 push(OBJECT | cw.addType("java/lang/invoke/MethodType"))
-                break
-            // case ClassWriter.HANDLE_BASE + [1..9]:
-            default:
+                // case ClassWriter.HANDLE_BASE + [1..9]:
+              case _ =>
                 push(OBJECT | cw.addType("java/lang/invoke/MethodHandle"))
             }
-            break
-        case Opcodes.ALOAD:
+
+        case Opcodes.ALOAD =>
             push(get(arg))
-            break
-        case Opcodes.IALOAD:
-        case Opcodes.BALOAD:
-        case Opcodes.CALOAD:
-        case Opcodes.SALOAD:
+
+        case Opcodes.IALOAD | Opcodes.BALOAD | Opcodes.CALOAD | Opcodes.SALOAD =>
             pop(2)
             push(INTEGER)
-            break
-        case Opcodes.LALOAD:
-        case Opcodes.D2L:
+        case Opcodes.LALOAD | Opcodes.D2L =>
             pop(2)
             push(LONG)
             push(TOP)
-            break
-        case Opcodes.FALOAD:
+
+        case Opcodes.FALOAD =>
             pop(2)
             push(FLOAT)
-            break
-        case Opcodes.DALOAD:
-        case Opcodes.L2D:
+
+        case Opcodes.DALOAD | Opcodes.L2D =>
             pop(2)
             push(DOUBLE)
             push(TOP)
-            break
-        case Opcodes.AALOAD:
+
+        case Opcodes.AALOAD =>
             pop(1)
             t1 = pop()
             push(ELEMENT_OF + t1)
-            break
-        case Opcodes.ISTORE:
-        case Opcodes.FSTORE:
-        case Opcodes.ASTORE:
+
+        case Opcodes.ISTORE | Opcodes.FSTORE | Opcodes.ASTORE =>
             t1 = pop()
             set(arg, t1)
             if (arg > 0) {
@@ -320,9 +280,7 @@ class Frame {
                     set(arg - 1, t2 | TOP_IF_LONG_OR_DOUBLE)
                 }
             }
-            break
-        case Opcodes.LSTORE:
-        case Opcodes.DSTORE:
+        case Opcodes.LSTORE | Opcodes.DSTORE =>
             pop(1)
             t1 = pop()
             set(arg, t1)
@@ -336,64 +294,26 @@ class Frame {
                     set(arg - 1, t2 | TOP_IF_LONG_OR_DOUBLE)
                 }
             }
-            break
-        case Opcodes.IASTORE:
-        case Opcodes.BASTORE:
-        case Opcodes.CASTORE:
-        case Opcodes.SASTORE:
-        case Opcodes.FASTORE:
-        case Opcodes.AASTORE:
+        case Opcodes.IASTORE | Opcodes.BASTORE | Opcodes.CASTORE | Opcodes.SASTORE | Opcodes.FASTORE | Opcodes.AASTORE =>
             pop(3)
-            break
-        case Opcodes.LASTORE:
-        case Opcodes.DASTORE:
+        case Opcodes.LASTORE | Opcodes.DASTORE =>
             pop(4)
-            break
-        case Opcodes.POP:
-        case Opcodes.IFEQ:
-        case Opcodes.IFNE:
-        case Opcodes.IFLT:
-        case Opcodes.IFGE:
-        case Opcodes.IFGT:
-        case Opcodes.IFLE:
-        case Opcodes.IRETURN:
-        case Opcodes.FRETURN:
-        case Opcodes.ARETURN:
-        case Opcodes.TABLESWITCH:
-        case Opcodes.LOOKUPSWITCH:
-        case Opcodes.ATHROW:
-        case Opcodes.MONITORENTER:
-        case Opcodes.MONITOREXIT:
-        case Opcodes.IFNULL:
-        case Opcodes.IFNONNULL:
+        case Opcodes.POP | Opcodes.IFEQ | Opcodes.IFNE | Opcodes.IFLT | Opcodes.IFGE | Opcodes.IFGT | Opcodes.IFLE | Opcodes.IRETURN | Opcodes.FRETURN | Opcodes.ARETURN | Opcodes.TABLESWITCH | Opcodes.LOOKUPSWITCH | Opcodes.ATHROW | Opcodes.MONITORENTER | Opcodes.MONITOREXIT | Opcodes.IFNULL | Opcodes.IFNONNULL =>
             pop(1)
-            break
-        case Opcodes.POP2:
-        case Opcodes.IF_ICMPEQ:
-        case Opcodes.IF_ICMPNE:
-        case Opcodes.IF_ICMPLT:
-        case Opcodes.IF_ICMPGE:
-        case Opcodes.IF_ICMPGT:
-        case Opcodes.IF_ICMPLE:
-        case Opcodes.IF_ACMPEQ:
-        case Opcodes.IF_ACMPNE:
-        case Opcodes.LRETURN:
-        case Opcodes.DRETURN:
+
+        case Opcodes.POP2 | Opcodes.IF_ICMPEQ | Opcodes.IF_ICMPNE | Opcodes.IF_ICMPLT | Opcodes.IF_ICMPGE | Opcodes.IF_ICMPGT | Opcodes.IF_ICMPLE | Opcodes.IF_ACMPEQ | Opcodes.IF_ACMPNE | Opcodes.LRETURN | Opcodes.DRETURN =>
             pop(2)
-            break
-        case Opcodes.DUP:
+        case Opcodes.DUP =>
             t1 = pop()
             push(t1)
             push(t1)
-            break
-        case Opcodes.DUP_X1:
+        case Opcodes.DUP_X1 =>
             t1 = pop()
             t2 = pop()
             push(t1)
             push(t2)
             push(t1)
-            break
-        case Opcodes.DUP_X2:
+        case Opcodes.DUP_X2 =>
             t1 = pop()
             t2 = pop()
             t3 = pop()
@@ -401,16 +321,14 @@ class Frame {
             push(t3)
             push(t2)
             push(t1)
-            break
-        case Opcodes.DUP2:
+        case Opcodes.DUP2 =>
             t1 = pop()
             t2 = pop()
             push(t2)
             push(t1)
             push(t2)
             push(t1)
-            break
-        case Opcodes.DUP2_X1:
+        case Opcodes.DUP2_X1 =>
             t1 = pop()
             t2 = pop()
             t3 = pop()
@@ -419,8 +337,7 @@ class Frame {
             push(t3)
             push(t2)
             push(t1)
-            break
-        case Opcodes.DUP2_X2:
+        case Opcodes.DUP2_X2 =>
             t1 = pop()
             t2 = pop()
             t3 = pop()
@@ -431,122 +348,62 @@ class Frame {
             push(t3)
             push(t2)
             push(t1)
-            break
-        case Opcodes.SWAP:
+        case Opcodes.SWAP =>
             t1 = pop()
             t2 = pop()
             push(t1)
             push(t2)
-            break
-        case Opcodes.IADD:
-        case Opcodes.ISUB:
-        case Opcodes.IMUL:
-        case Opcodes.IDIV:
-        case Opcodes.IREM:
-        case Opcodes.IAND:
-        case Opcodes.IOR:
-        case Opcodes.IXOR:
-        case Opcodes.ISHL:
-        case Opcodes.ISHR:
-        case Opcodes.IUSHR:
-        case Opcodes.L2I:
-        case Opcodes.D2I:
-        case Opcodes.FCMPL:
-        case Opcodes.FCMPG:
+        case Opcodes.IADD | Opcodes.ISUB | Opcodes.IMUL | Opcodes.IDIV | Opcodes.IREM | Opcodes.IAND | Opcodes.IOR | Opcodes.IXOR | Opcodes.ISHL | Opcodes.ISHR | Opcodes.IUSHR | Opcodes.L2I | Opcodes.D2I | Opcodes.FCMPL | Opcodes.FCMPG =>
             pop(2)
             push(INTEGER)
-            break
-        case Opcodes.LADD:
-        case Opcodes.LSUB:
-        case Opcodes.LMUL:
-        case Opcodes.LDIV:
-        case Opcodes.LREM:
-        case Opcodes.LAND:
-        case Opcodes.LOR:
-        case Opcodes.LXOR:
+        case Opcodes.LADD | Opcodes.LSUB | Opcodes.LMUL | Opcodes.LDIV | Opcodes.LREM | Opcodes.LAND | Opcodes.LOR | Opcodes.LXOR =>
             pop(4)
             push(LONG)
             push(TOP)
-            break
-        case Opcodes.FADD:
-        case Opcodes.FSUB:
-        case Opcodes.FMUL:
-        case Opcodes.FDIV:
-        case Opcodes.FREM:
-        case Opcodes.L2F:
-        case Opcodes.D2F:
+        case Opcodes.FADD | Opcodes.FSUB | Opcodes.FMUL | Opcodes.FDIV | Opcodes.FREM | Opcodes.L2F | Opcodes.D2F =>
             pop(2)
             push(FLOAT)
-            break
-        case Opcodes.DADD:
-        case Opcodes.DSUB:
-        case Opcodes.DMUL:
-        case Opcodes.DDIV:
-        case Opcodes.DREM:
+        case Opcodes.DADD | Opcodes.DSUB | Opcodes.DMUL | Opcodes.DDIV | Opcodes.DREM =>
             pop(4)
             push(DOUBLE)
             push(TOP)
-            break
-        case Opcodes.LSHL:
-        case Opcodes.LSHR:
-        case Opcodes.LUSHR:
+        case Opcodes.LSHL | Opcodes.LSHR | Opcodes.LUSHR =>
             pop(3)
             push(LONG)
             push(TOP)
-            break
-        case Opcodes.IINC:
+        case Opcodes.IINC =>
             set(arg, INTEGER)
-            break
-        case Opcodes.I2L:
-        case Opcodes.F2L:
+        case Opcodes.I2L |  Opcodes.F2L =>
             pop(1)
             push(LONG)
             push(TOP)
-            break
-        case Opcodes.I2F:
+        case Opcodes.I2F =>
             pop(1)
             push(FLOAT)
-            break
-        case Opcodes.I2D:
-        case Opcodes.F2D:
+        case Opcodes.I2D | Opcodes.F2D =>
             pop(1)
             push(DOUBLE)
             push(TOP)
-            break
-        case Opcodes.F2I:
-        case Opcodes.ARRAYLENGTH:
-        case Opcodes.INSTANCEOF:
+        case Opcodes.F2I | Opcodes.ARRAYLENGTH | Opcodes.INSTANCEOF =>
             pop(1)
             push(INTEGER)
-            break
-        case Opcodes.LCMP:
-        case Opcodes.DCMPL:
-        case Opcodes.DCMPG:
+        case Opcodes.LCMP | Opcodes.DCMPL | Opcodes.DCMPG =>
             pop(4)
             push(INTEGER)
-            break
-        case Opcodes.JSR:
-        case Opcodes.RET:
+        case Opcodes.JSR | Opcodes.RET =>
             throw new RuntimeException(
                     "JSR/RET are not supported with computeFrames option")
-        case Opcodes.GETSTATIC:
+        case Opcodes.GETSTATIC =>
             push(cw, item.strVal3)
-            break
-        case Opcodes.PUTSTATIC:
+        case Opcodes.PUTSTATIC =>
             pop(item.strVal3)
-            break
-        case Opcodes.GETFIELD:
+        case Opcodes.GETFIELD =>
             pop(1)
             push(cw, item.strVal3)
-            break
-        case Opcodes.PUTFIELD:
+        case Opcodes.PUTFIELD =>
             pop(item.strVal3)
             pop()
-            break
-        case Opcodes.INVOKEVIRTUAL:
-        case Opcodes.INVOKESPECIAL:
-        case Opcodes.INVOKESTATIC:
-        case Opcodes.INVOKEINTERFACE:
+        case Opcodes.INVOKEVIRTUAL | Opcodes.INVOKESPECIAL | Opcodes.INVOKESTATIC | Opcodes.INVOKEINTERFACE =>
             pop(item.strVal3)
             if (opcode != Opcodes.INVOKESTATIC) {
                 t1 = pop()
@@ -556,69 +413,54 @@ class Frame {
                 }
             }
             push(cw, item.strVal3)
-            break
-        case Opcodes.INVOKEDYNAMIC:
+        case Opcodes.INVOKEDYNAMIC =>
             pop(item.strVal2)
             push(cw, item.strVal2)
-            break
-        case Opcodes.NEW:
+        case Opcodes.NEW =>
             push(UNINITIALIZED | cw.addUninitializedType(item.strVal1, arg))
-            break
-        case Opcodes.NEWARRAY:
+        case Opcodes.NEWARRAY =>
             pop()
-            switch (arg) {
-            case Opcodes.T_BOOLEAN:
+            arg match {
+              case Opcodes.T_BOOLEAN =>
                 push(ARRAY_OF | BOOLEAN)
-                break
-            case Opcodes.T_CHAR:
+              case Opcodes.T_CHAR =>
                 push(ARRAY_OF | CHAR)
-                break
-            case Opcodes.T_BYTE:
+              case Opcodes.T_BYTE =>
                 push(ARRAY_OF | BYTE)
-                break
-            case Opcodes.T_SHORT:
+              case Opcodes.T_SHORT =>
                 push(ARRAY_OF | SHORT)
-                break
-            case Opcodes.T_INT:
+              case Opcodes.T_INT =>
                 push(ARRAY_OF | INTEGER)
-                break
-            case Opcodes.T_FLOAT:
+              case Opcodes.T_FLOAT =>
                 push(ARRAY_OF | FLOAT)
-                break
-            case Opcodes.T_DOUBLE:
+              case Opcodes.T_DOUBLE =>
                 push(ARRAY_OF | DOUBLE)
-                break
-            // case Opcodes.T_LONG:
-            default:
+              // case Opcodes.T_LONG:
+              case _ =>
                 push(ARRAY_OF | LONG)
-                break
             }
-            break
-        case Opcodes.ANEWARRAY:
-            String s = item.strVal1
+         case Opcodes.ANEWARRAY =>
+            val s = item.strVal1
             pop()
             if (s.charAt(0) == '[') {
                 push(cw, '[' + s)
             } else {
                 push(ARRAY_OF | OBJECT | cw.addType(s))
             }
-            break
-        case Opcodes.CHECKCAST:
-            s = item.strVal1
+          case Opcodes.CHECKCAST =>
+            val s = item.strVal1
             pop()
             if (s.charAt(0) == '[') {
                 push(cw, s)
             } else {
                 push(OBJECT | cw.addType(s))
             }
-            break
-        // case Opcodes.MULTIANEWARRAY:
-        default:
+          // case Opcodes.MULTIANEWARRAY:
+          case _ =>
             pop(arg)
             push(cw, item.strVal1)
-            break
         }
-    }*/
+    }
 
     def merge(cw: ClassWriter , frame:Frame  , edge: Int): Boolean = ??? /*{
         boolean changed = false
