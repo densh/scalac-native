@@ -92,16 +92,15 @@ class Frame {
         }
     }
 
-    private def push(cw: ClassWriter, desc: String): Unit = ??? /*{
-        int type = type(cw, desc)
-        if (type != 0) {
-            push(type)
-            if (type == LONG || type == DOUBLE) {
-                push(TOP)
+    private def push(cw: ClassWriter, desc: String): Unit = {
+        val type_ = Frame.type_(cw, desc)
+        if (type_ != 0) {
+            push(type_)
+            if (type_ == Frame.LONG || type_ == Frame.DOUBLE) {
+                push(Frame.TOP)
             }
         }
-    }*/
-
+    }
 
     private def pop(): Int = {
       if (outputStackTop > 0) {
