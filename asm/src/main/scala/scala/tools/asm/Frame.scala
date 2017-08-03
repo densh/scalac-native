@@ -71,25 +71,26 @@ class Frame {
         outputLocals[local] = type
     }*/
 
-    private def push(type_ : Int): Unit = ???/*{
+    private def push(type_ : Int): Unit = {
         // creates and/or resizes the output stack array if necessary
         if (outputStack == null) {
-            outputStack = new int[10]
+            outputStack = new Array[Int](10)
         }
-        int n = outputStack.length
+        val n = outputStack.length
         if (outputStackTop >= n) {
-            int[] t = new int[Math.max(outputStackTop + 1, 2 * n)]
+            val t = new Array[Int](Math.max(outputStackTop + 1, 2 * n))
             System.arraycopy(outputStack, 0, t, 0, n)
             outputStack = t
         }
         // pushes the type on the output stack
-        outputStack[outputStackTop++] = type
+        outputStack(outputStackTop) = type_
+        outputStackTop += 1
         // updates the maximun height reached by the output stack, if needed
-        int top = owner.inputStackTop + outputStackTop
+        val top = owner.inputStackTop + outputStackTop
         if (top > owner.outputStackMax) {
             owner.outputStackMax = top
         }
-    }*/
+    }
 
     private def push(cw: ClassWriter, desc: String): Unit = ??? /*{
         int type = type(cw, desc)
