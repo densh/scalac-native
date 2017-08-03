@@ -179,28 +179,33 @@ class Frame {
     }*/
 
     def initInputFrame(cw: ClassWriter , access: Int,
-            args: Array[Type], maxLocals: Int): Unit = ??? /*{
-        inputLocals = new int[maxLocals]
-        inputStack = new int[0]
-        int i = 0
+            args: Array[Type], maxLocals: Int): Unit = {
+        inputLocals = new Array[Int](maxLocals)
+        inputStack = new Array[Int](0)
+        var i = 0
         if ((access & Opcodes.ACC_STATIC) == 0) {
             if ((access & MethodWriter.ACC_CONSTRUCTOR) == 0) {
-                inputLocals[i++] = OBJECT | cw.addType(cw.thisName)
+                inputLocals(i) = Frame.OBJECT | cw.addType(cw.thisName)
+                i += 1
             } else {
-                inputLocals[i++] = UNINITIALIZED_THIS
+                inputLocals(i) = Frame.UNINITIALIZED_THIS
+                i += 1
             }
         }
-        for (int j = 0 j < args.length ++j) {
-            int t = type(cw, args[j].getDescriptor())
-            inputLocals[i++] = t
-            if (t == LONG || t == DOUBLE) {
-                inputLocals[i++] = TOP
+        (0 until args.length).foreach { j =>
+            val t = Frame.type_(cw, args(j).getDescriptor())
+            inputLocals(i) = t
+            i += 1
+            if (t == Frame.LONG || t == Frame.DOUBLE) {
+                inputLocals(i) = Frame.TOP
+                i += 1
             }
         }
         while (i < maxLocals) {
-            inputLocals[i++] = TOP
+            inputLocals(i) = Frame.TOP
+            i += 1
         }
-    }*/
+    }
 
     def execute(opcode: Int, arg: Int, cw: ClassWriter, item: Item): Unit = {
       import Frame._
