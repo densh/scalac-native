@@ -103,16 +103,18 @@ class Frame {
     }*/
 
 
-    private def pop(): Int = ??? /*{
-        if (outputStackTop > 0) {
-            return outputStack[--outputStackTop]
-        } else {
-            // if the output frame stack is empty, pops from the input stack
-            return STACK | -(--owner.inputStackTop)
-        }
-    }*/
+    private def pop(): Int = {
+      if (outputStackTop > 0) {
+        outputStackTop -= 1
+        outputStack(outputStackTop)
+      } else {
+        // if the output frame stack is empty, pops from the input stack
+        owner.inputStackTop -= 1
+        Frame.STACK | -(owner.inputStackTop)
+      }
+    }
 
-    private def pop(elements: Int): Unit = ??? /*{
+    private def pop(elements: Int): Unit = {
         if (outputStackTop >= elements) {
             outputStackTop -= elements
         } else {
@@ -122,10 +124,10 @@ class Frame {
             owner.inputStackTop -= elements - outputStackTop
             outputStackTop = 0
         }
-    }*/
+    }
 
-    private def pop(desc: String): Unit = ??? /*{
-        char c = desc.charAt(0)
+    private def pop(desc: String): Unit = {
+        val c = desc.charAt(0)
         if (c == '(') {
             pop((Type.getArgumentsAndReturnSizes(desc) >> 2) - 1)
         } else if (c == 'J' || c == 'D') {
@@ -133,7 +135,7 @@ class Frame {
         } else {
             pop(1)
         }
-    }*/
+    }
 
     private def init(var_ : Int): Unit = ??? /*{
         // creates and/or resizes the initializations array if necessary
