@@ -137,20 +137,21 @@ class Frame {
         }
     }
 
-    private def init(var_ : Int): Unit = ??? /*{
+    private def init(var_ : Int): Unit = {
         // creates and/or resizes the initializations array if necessary
         if (initializations == null) {
-            initializations = new int[2]
+            initializations = new Array[Int](2)
         }
-        int n = initializations.length
+        val n = initializations.length
         if (initializationCount >= n) {
-            int[] t = new int[Math.max(initializationCount + 1, 2 * n)]
+            val t = new Array[Int](Math.max(initializationCount + 1, 2 * n))
             System.arraycopy(initializations, 0, t, 0, n)
             initializations = t
         }
         // stores the type to be initialized
-        initializations[initializationCount++] = var
-    }*/
+        initializations(initializationCount) = var_
+        initializationCount += 1
+    }
 
     private def init(cw: ClassWriter , t: Int): Int = ??? /*{
         int s
