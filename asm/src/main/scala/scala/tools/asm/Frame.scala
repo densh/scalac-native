@@ -45,14 +45,14 @@ class Frame {
             // so it is still equal to its value in the input frame
             Frame.LOCAL | local
         } else {
-            var _type = outputLocals(local)
-            if (_type == 0) {
+            var type_ = outputLocals(local)
+            if (type_ == 0) {
                 // this local has never been assigned in this basic block,
                 // so it is still equal to its value in the input frame
                 outputLocals(local) = Frame.LOCAL | local
-                _type = Frame.LOCAL | local
+                type_ = Frame.LOCAL | local
             }
-            _type
+            type_
         }
     }
 
