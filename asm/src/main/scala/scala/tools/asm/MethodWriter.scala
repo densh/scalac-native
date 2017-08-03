@@ -915,12 +915,12 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     override
     def visitLocalVariable(name: String, desc: String,
             signature: String, start: Label, end:Label ,
-            index: Int): Unit = ???/*{
+            index: Int): Unit = {
         if (signature != null) {
             if (localVarType == null) {
                 localVarType = new ByteVector()
             }
-            ++localVarTypeCount
+            localVarTypeCount += 1
             localVarType.putShort(start.position)
                     .putShort(end.position - start.position)
                     .putShort(cw.newUTF8(name)).putShort(cw.newUTF8(signature))
@@ -929,20 +929,20 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         if (localVar == null) {
             localVar = new ByteVector()
         }
-        ++localVarCount
+        localVarCount += 1
         localVar.putShort(start.position)
                 .putShort(end.position - start.position)
                 .putShort(cw.newUTF8(name)).putShort(cw.newUTF8(desc))
                 .putShort(index)
-        if (compute != NOTHING) {
+        if (compute != MethodWriter.NOTHING) {
             // updates max locals
-            char c = desc.charAt(0)
-            int n = index + (c == 'J' || c == 'D' ? 2 : 1)
+            val c = desc.charAt(0)
+            val n = index + (if (c == 'J' || c == 'D') 2 else 1)
             if (n > maxLocals) {
                 maxLocals = n
             }
         }
-    }*/
+    }
 
     override
     def visitLocalVariableAnnotation(typeRef: Int,
