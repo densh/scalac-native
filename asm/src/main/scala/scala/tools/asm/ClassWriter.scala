@@ -592,16 +592,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
     def newInvokeDynamic(name: String, desc: String, bsm: Handle, bsmArgs: Object*): Int =
         newInvokeDynamicItem(name, desc, bsm, bsmArgs).index
 
-    def newFieldItem(owner: String, name: String, desc: String): Item = ???/*{
+    def newFieldItem(owner: String, name: String, desc: String): Item = {
         key3.set(FIELD, owner, name, desc)
-        Item result = get(key3)
+        var result = get(key3)
         if (result == null) {
             put122(FIELD, newClass(owner), newNameType(name, desc))
-            result = new Item(index++, key3)
+            result = new Item(index, key3)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newField(owner: String, name: String, desc: String): Int =
         newFieldItem(owner, name, desc).index
