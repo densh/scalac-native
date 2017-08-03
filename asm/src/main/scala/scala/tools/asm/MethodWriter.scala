@@ -509,13 +509,13 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
 
     override
     def visitMethodInsn(opcode: Int, owner: String,
-            name: String, desc: String, itf: Boolean): Unit = ???/*{
+            name: String, desc: String, itf: Boolean): Unit = {
         lastCodeOffset = code.length
-        Item i = cw.newMethodItem(owner, name, desc, itf)
-        int argSize = i.intVal
+        val i = cw.newMethodItem(owner, name, desc, itf)
+        var argSize = i.intVal
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(opcode, 0, cw, i)
             } else {
                 if (argSize == 0) {
@@ -526,7 +526,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                     // not to recompute them in the future
                     i.intVal = argSize
                 }
-                int size
+                var size = 0
                 if (opcode == Opcodes.INVOKESTATIC) {
                     size = stackSize - (argSize >> 2) + (argSize & 0x03) + 1
                 } else {
@@ -549,7 +549,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         } else {
             code.put12(opcode, i.index)
         }
-    }*/
+    }
 
     override
     def visitInvokeDynamicInsn(name: String, desc: String,
