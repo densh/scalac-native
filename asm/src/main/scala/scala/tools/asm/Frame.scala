@@ -878,9 +878,10 @@ object Frame {
         }
     }
 
-    def merge(cw: ClassWriter , t: Int,
-            types: Array[Int], index: Int): Boolean = ??? /*{
-        int u = types[index]
+    def merge(cw: ClassWriter , t_ : Int,
+            types: Array[Int], index: Int): Boolean = {
+        var t = t_
+        val u = types(index)
         if (u == t) {
             // if the types are equal, merge(u,t)=u, so there is no change
             return false
@@ -893,10 +894,10 @@ object Frame {
         }
         if (u == 0) {
             // if types[index] has never been assigned, merge(u,t)=t
-            types[index] = t
+            types(index) = t
             return true
         }
-        int v
+        var v = 0
         if ((u & BASE_KIND) == OBJECT || (u & DIM) != 0) {
             // if u is a reference type of any dimension
             if (t == NULL) {
@@ -908,12 +909,11 @@ object Frame {
                     // if t is also a reference type, and if u and t have the
                     // same dimension merge(u,t) = dim(t) | common parent of the
                     // element types of u and t
-                    v = (t & DIM) | OBJECT
-                            | cw.getMergedType(t & BASE_VALUE, u & BASE_VALUE)
+                    v = (t & DIM) | OBJECT | cw.getMergedType(t & BASE_VALUE, u & BASE_VALUE)
                 } else {
                     // if u and t are array types, but not with the same element
                     // type, merge(u,t) = dim(u) - 1 | java/lang/Object
-                    int vdim = ELEMENT_OF + (u & DIM)
+                    val vdim = ELEMENT_OF + (u & DIM)
                     v = vdim | OBJECT | cw.addType("java/lang/Object")
                 }
             } else if ((t & BASE_KIND) == OBJECT || (t & DIM) != 0) {
@@ -921,12 +921,11 @@ object Frame {
                 // is min(udim, tdim) | java/lang/Object, where udim is the
                 // array dimension of u, minus 1 if u is an array type with a
                 // primitive element type (and similarly for tdim).
-                int tdim = (((t & DIM) == 0 || (t & BASE_KIND) == OBJECT) ? 0
-                        : ELEMENT_OF) + (t & DIM)
-                int udim = (((u & DIM) == 0 || (u & BASE_KIND) == OBJECT) ? 0
-                        : ELEMENT_OF) + (u & DIM)
-                v = Math.min(tdim, udim) | OBJECT
-                        | cw.addType("java/lang/Object")
+                val tdim = (if ((t & DIM) == 0 || (t & BASE_KIND) == OBJECT) 0
+                  else ELEMENT_OF) + (t & DIM)
+                val udim = (if ((u & DIM) == 0 || (u & BASE_KIND) == OBJECT) 0
+                  else ELEMENT_OF) + (u & DIM)
+                v = Math.min(tdim, udim) | OBJECT | cw.addType("java/lang/Object")
             } else {
                 // if t is any other type, merge(u,t)=TOP
                 v = TOP
@@ -934,15 +933,15 @@ object Frame {
         } else if (u == NULL) {
             // if u is the NULL type, merge(u,t)=t,
             // or TOP if t is not a reference type
-            v = (t & BASE_KIND) == OBJECT || (t & DIM) != 0 ? t : TOP
+            v = if ((t & BASE_KIND) == OBJECT || (t & DIM) != 0) t else TOP
         } else {
             // if u is any other type, merge(u,t)=TOP whatever t
             v = TOP
         }
         if (u != v) {
-            types[index] = v
+            types(index) = v
             return true
         }
         return false
-    }*/
+    }
 }
