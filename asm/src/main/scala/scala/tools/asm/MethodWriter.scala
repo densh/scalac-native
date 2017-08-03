@@ -1250,9 +1250,9 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         currentBlock.successors = b
     }*/
 
-    private def noSuccessor(): Unit = ???/*{
-        if (compute == FRAMES) {
-            Label l = new Label()
+    private def noSuccessor(): Unit = {
+        if (compute == MethodWriter.FRAMES) {
+            val l = new Label()
             l.frame = new Frame()
             l.frame.owner = l
             l.resolve(this, code.length, code.data)
@@ -1262,7 +1262,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             currentBlock.outputStackMax = maxStackSize
         }
         currentBlock = null
-    }*/
+    }
 
     private def visitFrame(f: Frame): Unit = ???/*{
         int i, t
