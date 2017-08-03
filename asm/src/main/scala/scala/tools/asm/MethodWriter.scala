@@ -1380,16 +1380,16 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         endFrame()
     }*/
 
-    private def startFrame(offset: Int, nLocal: Int, nStack: Int): Int = ???/*{
-        int n = 3 + nLocal + nStack
+    private def startFrame(offset: Int, nLocal: Int, nStack: Int): Int = {
+        val n = 3 + nLocal + nStack
         if (frame == null || frame.length < n) {
-            frame = new int[n]
+            frame = new Array[Int](n)
         }
-        frame[0] = offset
-        frame[1] = nLocal
-        frame[2] = nStack
+        frame(0) = offset
+        frame(1) = nLocal
+        frame(2) = nStack
         return 3
-    }*/
+    }
 
     private def endFrame(): Unit = ???/*{
         if (previousFrame != null) { // do not write the first frame
