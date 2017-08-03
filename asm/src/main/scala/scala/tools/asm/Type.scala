@@ -114,17 +114,17 @@ class Type(val sort: Int, val buf: Array[Char], val off: Int, val len: Int) {
         // the size is in byte 0 of 'off' for primitive types (buf == null)
         if (buf == null) (off & 0xFF) else 1
 
-    def getOpcode(opcode: Int): Int = ???/*{
+    def getOpcode(opcode: Int): Int = {
         if (opcode == Opcodes.IALOAD || opcode == Opcodes.IASTORE) {
             // the offset for IALOAD or IASTORE is in byte 1 of 'off' for
             // primitive types (buf == null)
-            return opcode + (buf == null ? (off & 0xFF00) >> 8 : 4)
+            opcode + (if (buf == null) (off & 0xFF00) >> 8 else 4)
         } else {
             // the offset for other instructions is in byte 2 of 'off' for
             // primitive types (buf == null)
-            return opcode + (buf == null ? (off & 0xFF0000) >> 16 : 4)
+            opcode + (if (buf == null) (off & 0xFF0000) >> 16 else 4)
         }
-    }*/
+    }
 
     override
     def equals(o: Any): Boolean = ???/*{
