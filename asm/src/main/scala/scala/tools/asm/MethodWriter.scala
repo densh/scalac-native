@@ -1233,15 +1233,15 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     override
     def visitEnd(): Unit = ()
 
-    private def addSuccessor(info: Int, successor: Label): Unit = ???/*{
+    private def addSuccessor(info: Int, successor: Label): Unit = {
         // creates and initializes an Edge object...
-        Edge b = new Edge()
+        val b = new Edge()
         b.info = info
         b.successor = successor
         // ...and adds it to the successor list of the currentBlock block
         b.next = currentBlock.successors
         currentBlock.successors = b
-    }*/
+    }
 
     private def noSuccessor(): Unit = {
         if (compute == MethodWriter.FRAMES) {
