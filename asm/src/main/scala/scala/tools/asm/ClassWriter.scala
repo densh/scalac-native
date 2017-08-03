@@ -717,21 +717,21 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         result.index
     }
 
-    private def addType(item: Item): Item = ???/*{
-        ++typeCount
-        Item result = new Item(typeCount, key)
+    private def addType(item: Item): Item = {
+        typeCount = (typeCount + 1).toShort
+        val result = new Item(typeCount, key)
         put(result)
         if (typeTable == null) {
-            typeTable = new Item[16]
+            typeTable = new Array[Item](16)
         }
         if (typeCount == typeTable.length) {
-            Item[] newTable = new Item[2 * typeTable.length]
+            val newTable = new Array[Item](2 * typeTable.length)
             System.arraycopy(typeTable, 0, newTable, 0, typeTable.length)
             typeTable = newTable
         }
-        typeTable[typeCount] = result
-        return result
-    }*/
+        typeTable(typeCount) = result
+        result
+    }
 
     def getMergedType(type1: Int, type2: Int): Int = ???/*{
         key2.type = TYPE_MERGED
