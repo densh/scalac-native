@@ -1391,17 +1391,17 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         return 3
     }
 
-    private def endFrame(): Unit = ???/*{
+    private def endFrame(): Unit = {
         if (previousFrame != null) { // do not write the first frame
             if (stackMap == null) {
                 stackMap = new ByteVector()
             }
             writeFrame()
-            ++frameCount
+            frameCount += 1
         }
         previousFrame = frame
         frame = null
-    }*/
+    }
 
     private def writeFrame(): Unit = ???/*{
         int clocalsSize = frame[1]
