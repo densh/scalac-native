@@ -104,10 +104,10 @@ class Type(val sort: Int, val buf: Array[Char], val off: Int, val len: Int) {
         buf.append(((off & 0xFF000000) >>> 24).toChar)
       } else if (sort == Type.OBJECT) {
         buf.append('L')
-        buf.append(this.buf, off, len)
+        buf.appendAll(this.buf, off, len)
         buf.append(';')
       } else { // sort == ARRAY || sort == METHOD
-        buf.append(this.buf, off, len)
+        buf.appendAll(this.buf, off, len)
       }
 
     def getSize(): Int =
