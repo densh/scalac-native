@@ -980,14 +980,14 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }*/
 
     override
-    def visitLineNumber(line: Int, start: Label): Unit = ???/*{
+    def visitLineNumber(line: Int, start: Label): Unit = {
         if (lineNumber == null) {
             lineNumber = new ByteVector()
         }
-        ++lineNumberCount
+        lineNumberCount += 1
         lineNumber.putShort(start.position)
         lineNumber.putShort(line)
-    }*/
+    }
 
     override
     def visitMaxs(maxStack: Int, maxLocals: Int): Unit = ???/*{
