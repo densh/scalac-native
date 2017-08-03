@@ -705,17 +705,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         return result.index
     }*/
 
-    def addUninitializedType(type_ : String, offset: Int): Int = ???/*{
-        key.type = TYPE_UNINIT
+    def addUninitializedType(type_ : String, offset: Int): Int = {
+        key.type_ = TYPE_UNINIT
         key.intVal = offset
-        key.strVal1 = type
-        key.hashCode = 0x7FFFFFFF & (TYPE_UNINIT + type.hashCode() + offset)
-        Item result = get(key)
+        key.strVal1 = type_
+        key.hashCode_ = 0x7FFFFFFF & (TYPE_UNINIT + type_.hashCode() + offset)
+        var result = get(key)
         if (result == null) {
             result = addType(key)
         }
-        return result.index
-    }*/
+        result.index
+    }
 
     private def addType(item: Item): Item = ???/*{
         ++typeCount
