@@ -1261,54 +1261,66 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         currentBlock = null
     }
 
-    private def visitFrame(f: Frame): Unit = ???/*{
-        int i, t
-        int nTop = 0
-        int nLocal = 0
-        int nStack = 0
-        int[] locals = f.inputLocals
-        int[] stacks = f.inputStack
+    private def visitFrame(f: Frame): Unit = {
+        var t = 0
+        var nTop = 0
+        var nLocal = 0
+        var nStack = 0
+        var locals = f.inputLocals
+        var stacks = f.inputStack
         // computes the number of locals (ignores TOP types that are just after
         // a LONG or a DOUBLE, and all trailing TOP types)
-        for (i = 0 i < locals.length ++i) {
+        var i = 0
+        while (i < locals.length) {
             t = locals(i)
             if (t == Frame.TOP) {
-                ++nTop
+                nTop += 1
             } else {
                 nLocal += nTop + 1
                 nTop = 0
             }
             if (t == Frame.LONG || t == Frame.DOUBLE) {
-                ++i
+                i += 1
             }
+            i += 1
         }
         // computes the stack size (ignores TOP types that are just after
         // a LONG or a DOUBLE)
-        for (i = 0 i < stacks.length ++i) {
-            t = stacks(i)
-            ++nStack
+        var j = 0
+        while (j < stacks.length) {
+            t = stacks(j)
+            nStack += 1
             if (t == Frame.LONG || t == Frame.DOUBLE) {
-                ++i
+              j += 1
             }
+            j += 1
         }
         // visits the frame and its content
-        int frameIndex = startFrame(f.owner.position, nLocal, nStack)
-        for (i = 0 nLocal > 0 ++i, --nLocal) {
-            t = locals(i)
-            frame[frameIndex++] = t
+        var frameIndex = startFrame(f.owner.position, nLocal, nStack)
+        var k = 0
+        while (nLocal > 0) {
+            val t = locals(k)
+            frame(frameIndex) = t
+            frameIndex += 1
             if (t == Frame.LONG || t == Frame.DOUBLE) {
-                ++i
+              k += 1
             }
+
+            k += 1
+            nLocal -= 1
         }
-        for (i = 0 i < stacks.length ++i) {
-            t = stacks(i)
-            frame[frameIndex++] = t
+        var l = 0
+        while (l < stacks.length) {
+            t = stacks(l)
+            frame(frameIndex) = t
+            frameIndex += 1
             if (t == Frame.LONG || t == Frame.DOUBLE) {
-                ++i
+                l += 1
             }
+            l += 1
         }
         endFrame()
-    }*/
+    }
 
     private def visitImplicitFirstFrame(): Unit = ???/*{
         // There can be at most descriptor.length() + 1 locals
