@@ -471,98 +471,105 @@ class Frame {
         }
     }
 
-    def merge(cw: ClassWriter , frame:Frame  , edge: Int): Boolean = ??? /*{
-        boolean changed = false
-        int i, s, dim, kind, t
+    def merge(cw: ClassWriter , frame:Frame  , edge: Int): Boolean = {
+        var changed = false
+        var i, s, dim, kind, t = 0
 
-        int nLocal = inputLocals.length
-        int nStack = inputStack.length
+        var nLocal = inputLocals.length
+        var nStack = inputStack.length
         if (frame.inputLocals == null) {
-            frame.inputLocals = new int[nLocal]
+            frame.inputLocals = new Array[Int](nLocal)
             changed = true
         }
 
-        for (i = 0 i < nLocal ++i) {
+        while (i < nLocal) {
             if (outputLocals != null && i < outputLocals.length) {
-                s = outputLocals[i]
+                s = outputLocals(i)
                 if (s == 0) {
-                    t = inputLocals[i]
+                    t = inputLocals(i)
                 } else {
-                    dim = s & DIM
-                    kind = s & KIND
-                    if (kind == BASE) {
+                    dim = s & Frame.DIM
+                    kind = s & Frame.KIND
+                    if (kind == Frame.BASE) {
                         t = s
                     } else {
-                        if (kind == LOCAL) {
-                            t = dim + inputLocals[s & VALUE]
+                        if (kind == Frame.LOCAL) {
+                            t = dim + inputLocals(s & Frame.VALUE)
                         } else {
-                            t = dim + inputStack[nStack - (s & VALUE)]
+                            t = dim + inputStack(nStack - (s & Frame.VALUE))
                         }
-                        if ((s & TOP_IF_LONG_OR_DOUBLE) != 0
-                                && (t == LONG || t == DOUBLE)) {
-                            t = TOP
+                        if ((s & Frame.TOP_IF_LONG_OR_DOUBLE) != 0
+                                && (t == Frame.LONG || t == Frame.DOUBLE)) {
+                            t = Frame.TOP
                         }
                     }
                 }
             } else {
-                t = inputLocals[i]
+                t = inputLocals(i)
             }
             if (initializations != null) {
                 t = init(cw, t)
             }
-            changed |= merge(cw, t, frame.inputLocals, i)
+            changed |= Frame.merge(cw, t, frame.inputLocals, i)
+            i += 1
         }
 
         if (edge > 0) {
-            for (i = 0 i < nLocal ++i) {
-                t = inputLocals[i]
-                changed |= merge(cw, t, frame.inputLocals, i)
+            i = 0
+            while (i < nLocal) {
+                t = inputLocals(i)
+                changed |= Frame.merge(cw, t, frame.inputLocals, i)
+                i += 1
             }
             if (frame.inputStack == null) {
-                frame.inputStack = new int[1]
+                frame.inputStack = new Array[Int](1)
                 changed = true
             }
-            changed |= merge(cw, edge, frame.inputStack, 0)
+            changed |= Frame.merge(cw, edge, frame.inputStack, 0)
             return changed
         }
 
-        int nInputStack = inputStack.length + owner.inputStackTop
+        val nInputStack = inputStack.length + owner.inputStackTop
         if (frame.inputStack == null) {
-            frame.inputStack = new int[nInputStack + outputStackTop]
+            frame.inputStack = new Array[Int](nInputStack + outputStackTop)
             changed = true
         }
 
-        for (i = 0 i < nInputStack ++i) {
-            t = inputStack[i]
+        i = 0
+        while (i < nInputStack) {
+            t = inputStack(i)
             if (initializations != null) {
                 t = init(cw, t)
             }
-            changed |= merge(cw, t, frame.inputStack, i)
+            changed |= Frame.merge(cw, t, frame.inputStack, i)
+            i += 1
         }
-        for (i = 0 i < outputStackTop ++i) {
-            s = outputStack[i]
-            dim = s & DIM
-            kind = s & KIND
-            if (kind == BASE) {
+        i = 0
+        while (i < outputStackTop) {
+            s = outputStack(i)
+            dim = s & Frame.DIM
+            kind = s & Frame.KIND
+            if (kind == Frame.BASE) {
                 t = s
             } else {
-                if (kind == LOCAL) {
-                    t = dim + inputLocals[s & VALUE]
+                if (kind == Frame.LOCAL) {
+                    t = dim + inputLocals(s & Frame.VALUE)
                 } else {
-                    t = dim + inputStack[nStack - (s & VALUE)]
+                    t = dim + inputStack(nStack - (s & Frame.VALUE))
                 }
-                if ((s & TOP_IF_LONG_OR_DOUBLE) != 0
-                        && (t == LONG || t == DOUBLE)) {
-                    t = TOP
+                if ((s & Frame.TOP_IF_LONG_OR_DOUBLE) != 0
+                        && (t == Frame.LONG || t == Frame.DOUBLE)) {
+                    t = Frame.TOP
                 }
             }
             if (initializations != null) {
                 t = init(cw, t)
             }
-            changed |= merge(cw, t, frame.inputStack, nInputStack + i)
+            changed |= Frame.merge(cw, t, frame.inputStack, nInputStack + i)
+            i += 1
         }
         return changed
-    }*/
+    }
 
 }
 
