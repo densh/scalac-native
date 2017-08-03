@@ -245,32 +245,35 @@ object Type {
     def getType(m: Method): Type =
         getType(getMethodDescriptor(m))
 
-    def getArgumentTypes(methodDescriptor:String ): Array[Type] = ???/*{
-        char[] buf = methodDescriptor.toCharArray()
-        int off = 1
-        int size = 0
-        while (true) {
-            char car = buf[off++]
+    def getArgumentTypes(methodDescriptor:String ): Array[Type] = {
+        val buf = methodDescriptor.toCharArray()
+        var off = 1
+        var size = 0
+        var continue = true
+        while (continue) {
+            val car = buf(off)
+            off += 1
             if (car == ')') {
-                break
+                continue = false
             } else if (car == 'L') {
-                while (buf[off++] != '') {
+                while (buf(off) != ';') {
+                  off += 1
                 }
-                ++size
+                size += 1
             } else if (car != '[') {
-                ++size
+              size += 1
             }
         }
-        Type[] args = new Type[size]
+        val args = new Array[Type](size)
         off = 1
         size = 0
-        while (buf[off] != ')') {
-            args[size] = getType(buf, off)
-            off += args[size].len + (args[size].sort == OBJECT ? 2 : 0)
+        while (buf(off) != ')') {
+            args(size) = getType(buf, off)
+            off += (args(size).len + (if (args(size).sort == OBJECT) 2 else 0))
             size += 1
         }
-        return args
-    }*/
+        args
+    }
 
     def getArgumentTypes(method:Method ): Array[Type] = ???/*{
         Class<?>[] classes = method.getParameterTypes()
