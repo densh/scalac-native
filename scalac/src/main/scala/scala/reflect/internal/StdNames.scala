@@ -42,44 +42,7 @@ trait StdNames {
 
   private[reflect] def compactifyName(orig: String): String = compactify(orig)
   private final object compactify extends (String => String) {
-    val md5 = MessageDigest.getInstance("MD5")
-
-    /**
-     * COMPACTIFY
-     *
-     * The hashed name has the form (prefix + marker + md5 + marker + suffix), where
-     *   - prefix/suffix.length = MaxNameLength / 4
-     *   - md5.length = 32
-     *
-     * We obtain the formula:
-     *
-     *   FileNameLength = 2*(MaxNameLength / 4) + 2.marker.length + 32 + suffixLength
-     *
-     * (+suffixLength for ".class" and potential module class suffix that is added *after* this transform).
-     *
-     * MaxNameLength can therefore be computed as follows:
-     */
-    val marker = "$$$$"
-    val maxSuffixLength = "$.class".length + 1 // potential module class suffix and file extension
-    val MaxNameLength = math.min(
-      settings.maxClassfileName.value - maxSuffixLength,
-      2 * (settings.maxClassfileName.value - maxSuffixLength - 2*marker.length - 32)
-    )
-    def toMD5(s: String, edge: Int): String = {
-      val prefix = s take edge
-      val suffix = s takeRight edge
-
-      val cs = s.toArray
-      val bytes = Codec toUTF8 cs
-      md5 update bytes
-      val md5chars = (md5.digest() map (b => (b & 0xFF).toHexString)).mkString
-
-      prefix + marker + md5chars + marker + suffix
-    }
-    def apply(s: String): String = (
-      if (s.length <= MaxNameLength) s
-      else toMD5(s, MaxNameLength / 4)
-    )
+    def apply(s: String): String = s
   }
 
   abstract class CommonNames extends NamesApi {
