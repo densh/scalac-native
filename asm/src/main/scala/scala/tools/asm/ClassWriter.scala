@@ -175,7 +175,7 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
     }
 
     override
-    def visitInnerClass(name: String, outerName: String, innerName: String, access: Int): Unit = ???/*{
+    def visitInnerClass(name: String, outerName: String, innerName: String, access: Int): Unit = {
         if (innerClasses == null) {
             innerClasses = new ByteVector()
         }
@@ -189,12 +189,12 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         // and equality tests). If so we store the index of this inner class
         // entry (plus one) in intVal. This hack allows duplicate detection in
         // O(1) time.
-        Item nameItem = newClassItem(name)
+        val nameItem = newClassItem(name)
         if (nameItem.intVal == 0) {
-            ++innerClassesCount
+            innerClassesCount += 1
             innerClasses.putShort(nameItem.index)
-            innerClasses.putShort(outerName == null ? 0 : newClass(outerName))
-            innerClasses.putShort(innerName == null ? 0 : newUTF8(innerName))
+            innerClasses.putShort(if (outerName == null) 0 else newClass(outerName))
+            innerClasses.putShort(if (innerName == null) 0 else newUTF8(innerName))
             innerClasses.putShort(access)
             nameItem.intVal = innerClassesCount
         } else {
@@ -202,7 +202,7 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
             // arguments of this method and throw an exception if there is a
             // difference?
         }
-    }*/
+    }
 
     override
     def visitField(access: Int, name: String,
