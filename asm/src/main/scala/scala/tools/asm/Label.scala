@@ -73,19 +73,21 @@ class Label {
     }
 
     private def addReference(sourcePosition: Int,
-            referencePosition: Int): Unit = ???/*{
+            referencePosition: Int): Unit = {
         if (srcAndRefPositions == null) {
-            srcAndRefPositions = new int[6]
+            srcAndRefPositions = new Array[Int](6)
         }
         if (referenceCount >= srcAndRefPositions.length) {
-            int[] a = new int[srcAndRefPositions.length + 6]
+            val a = new Array[Int](srcAndRefPositions.length + 6)
             System.arraycopy(srcAndRefPositions, 0, a, 0,
                     srcAndRefPositions.length)
             srcAndRefPositions = a
         }
-        srcAndRefPositions[referenceCount++] = sourcePosition
-        srcAndRefPositions[referenceCount++] = referencePosition
-    }*/
+        srcAndRefPositions(referenceCount) = sourcePosition
+        referenceCount += 1
+        srcAndRefPositions(referenceCount) = referencePosition
+        referenceCount += 1
+    }
 
     def resolve(owner:MethodWriter, position: Int, data: Array[Byte]): Boolean = {
         var needUpdate = false
