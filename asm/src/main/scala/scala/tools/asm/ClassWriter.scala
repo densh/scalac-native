@@ -652,16 +652,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         return result
     }*/
 
-    private def newString(value: String): Item = ???/*{
+    private def newString(value: String): Item = {
         key2.set(STR, value, null, null)
-        Item result = get(key2)
+        var result = get(key2)
         if (result == null) {
             pool.put12(STR, newUTF8(value))
-            result = new Item(index++, key2)
+            result = new Item(index, key2)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newNameType(name: String, desc: String): Int =
         newNameTypeItem(name, desc).index
