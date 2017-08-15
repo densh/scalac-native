@@ -707,17 +707,17 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }
 
     override
-    def visitLdcInsn(cst: Object): Unit = ???/*{
+    def visitLdcInsn(cst: Object): Unit = {
         lastCodeOffset = code.length
-        Item i = cw.newConstItem(cst)
+        val i = cw.newConstItem(cst)
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(Opcodes.LDC, 0, cw, i)
             } else {
-                int size
+                var size = 0
                 // computes the stack size variation
-                if (i.type == ClassWriter.LONG || i.type == ClassWriter.DOUBLE) {
+                if (i.type_ == ClassWriter.LONG || i.type_ == ClassWriter.DOUBLE) {
                     size = stackSize + 2
                 } else {
                     size = stackSize + 1
@@ -730,15 +730,15 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             }
         }
         // adds the instruction to the bytecode of the method
-        int index = i.index
-        if (i.type == ClassWriter.LONG || i.type == ClassWriter.DOUBLE) {
+        val index = i.index
+        if (i.type_ == ClassWriter.LONG || i.type_ == ClassWriter.DOUBLE) {
             code.put12(20 /* LDC2_W */, index)
         } else if (index >= 256) {
             code.put12(19 /* LDC_W */, index)
         } else {
             code.put11(Opcodes.LDC, index)
         }
-    }*/
+    }
 
     override
     def visitIincInsn(var_ : Int, increment: Int): Unit = ???/*{
