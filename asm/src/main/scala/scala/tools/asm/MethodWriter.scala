@@ -581,12 +581,12 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }*/
 
     override
-    def visitJumpInsn(opcode: Int, label: Label): Unit = ???/*{
+    def visitJumpInsn(opcode: Int, label: Label): Unit = {
         lastCodeOffset = code.length
-        Label nextInsn = null
+        var nextInsn: Label = null
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(opcode, 0, null, null)
                 // 'label' is the target of a jump instruction
                 label.getFirst().status |= Label.TARGET
@@ -600,7 +600,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 if (opcode == Opcodes.JSR) {
                     if ((label.status & Label.SUBROUTINE) == 0) {
                         label.status |= Label.SUBROUTINE
-                        ++subroutines
+                        subroutines += 1
                     }
                     currentBlock.status |= Label.JSR
                     addSuccessor(stackSize + 1, label)
@@ -610,14 +610,14 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                     // updates current stack size (max stack size unchanged
                     // because stack size variation always negative in this
                     // case)
-                    stackSize += Frame.SIZE[opcode]
+                    stackSize += Frame.SIZE(opcode)
                     addSuccessor(stackSize, label)
                 }
             }
         }
         // adds the instruction to the bytecode of the method
         if ((label.status & Label.RESOLVED) != 0
-                && label.position - code.length < Short.MIN_VALUE) {
+                && label.position - code.length < Short.MinValue) {
             if (opcode == Opcodes.GOTO) {
                 code.putByte(200) // GOTO_W
             } else if (opcode == Opcodes.JSR) {
@@ -628,8 +628,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 if (nextInsn != null) {
                     nextInsn.status |= Label.TARGET
                 }
-                code.putByte(opcode <= 166 ? ((opcode + 1) ^ 1) - 1
-                        : opcode ^ 1)
+                code.putByte(if (opcode <= 166) ((opcode + 1) ^ 1) - 1 else opcode ^ 1)
                 code.putShort(8) // jump offset
                 code.putByte(200) // GOTO_W
             }
@@ -650,7 +649,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 noSuccessor()
             }
         }
-    }*/
+    }
 
     override def visitLabel(label: Label): Unit = {
         // resolves previous forward references to label, if any
