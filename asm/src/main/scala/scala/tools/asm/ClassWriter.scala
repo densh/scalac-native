@@ -408,50 +408,31 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         out.data
     }
 
-    def newConstItem(cst: Any): Item = ???/*{
-        if (cst instanceof Integer) {
-            int val = ((Integer) cst).intValue()
-            return newInteger(val)
-        } else if (cst instanceof Byte) {
-            int val = ((Byte) cst).intValue()
-            return newInteger(val)
-        } else if (cst instanceof Character) {
-            int val = ((Character) cst).charValue()
-            return newInteger(val)
-        } else if (cst instanceof Short) {
-            int val = ((Short) cst).intValue()
-            return newInteger(val)
-        } else if (cst instanceof Boolean) {
-            int val = ((Boolean) cst).booleanValue() ? 1 : 0
-            return newInteger(val)
-        } else if (cst instanceof Float) {
-            float val = ((Float) cst).floatValue()
-            return newFloat(val)
-        } else if (cst instanceof Long) {
-            long val = ((Long) cst).longValue()
-            return newLong(val)
-        } else if (cst instanceof Double) {
-            double val = ((Double) cst).doubleValue()
-            return newDouble(val)
-        } else if (cst instanceof String) {
-            return newString((String) cst)
-        } else if (cst instanceof Type) {
-            Type t = (Type) cst
-            int s = t.getSort()
-            if (s == Type.OBJECT) {
-                return newClassItem(t.getInternalName())
-            } else if (s == Type.METHOD) {
-                return newMethodTypeItem(t.getDescriptor())
-            } else { // s == primitive type or array
-                return newClassItem(t.getDescriptor())
-            }
-        } else if (cst instanceof Handle) {
-            Handle h = (Handle) cst
-            return newHandleItem(h.tag, h.owner, h.name, h.desc, h.itf)
-        } else {
-            throw new IllegalArgumentException("value " + cst)
-        }
-    }*/
+    def newConstItem(cst: Any): Item =
+      cst match {
+        case value: Integer => newInteger(value.intValue())
+        case value: Byte    => newInteger(value.intValue())
+        case value: Character => newInteger(value.charValue())
+        case value: Short     => newInteger(value.intValue())
+        case value: Boolean   => newInteger(if (value.booleanValue()) 1 else 0)
+        case value: Float     => newFloat(value.floatValue())
+        case value: Long      => newLong(value.longValue())
+        case value: Double    => newDouble(value.doubleValue())
+        case value: String    => newString(value)
+        case t: Type =>
+          val s = t.getSort()
+          if (s == Type.OBJECT) {
+            newClassItem(t.getInternalName())
+          } else if (s == Type.METHOD) {
+            newMethodTypeItem(t.getDescriptor())
+          } else { // s == primitive type or array
+            newClassItem(t.getDescriptor())
+          }
+        case h: Handle =>
+          newHandleItem(h.tag, h.owner, h.name, h.desc, h.itf)
+        case _ =>
+          throw new IllegalArgumentException("value " + cst)
+      }
 
     def newConst(cst: Object): Int =
         newConstItem(cst).index
