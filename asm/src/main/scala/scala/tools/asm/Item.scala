@@ -146,4 +146,6 @@ class Item {
           i.strVal1.equals(strVal1) && i.strVal2.equals(strVal2) && i.strVal3.equals(strVal3)
       }
     }
+
+  override def hashCode(): Int = hashCode_
 }
