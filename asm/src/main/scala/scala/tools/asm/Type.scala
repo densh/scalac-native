@@ -259,6 +259,7 @@ object Type {
                 while (buf(off) != ';') {
                   off += 1
                 }
+                off += 1
                 size += 1
             } else if (car != '[') {
               size += 1
