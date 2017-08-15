@@ -309,6 +309,7 @@ object Type {
                 while (desc.charAt(c) != ';') {
                   c += 1
                 }
+                c += 1
                 n += 1
             } else if (car == '[') {
                 while ({car = desc.charAt(c); car} == '[') {
