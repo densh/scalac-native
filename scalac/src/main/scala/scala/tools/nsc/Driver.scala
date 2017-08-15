@@ -27,9 +27,11 @@ abstract class Driver {
     if (command.files.isEmpty) {
       reporter.echo(command.usageMsg)
     } else {
-      val run = new compiler.Run()
-      run compile command.files
-      reporter.printSummary()
+      while (true) {
+        val run = new compiler.Run()
+        run compile command.files
+        reporter.printSummary()
+      }
     }
   }
 
