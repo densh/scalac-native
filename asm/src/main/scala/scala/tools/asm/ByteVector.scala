@@ -108,25 +108,33 @@ class ByteVector(initialSize: Int) {
         this
     }
 
-    def putLong(l: Long):ByteVector = ???/*{
-        int length = this.length
-        if (length + 8 > data.length) {
+    def putLong(l: Long):ByteVector = {
+        var length = this.length
+        if (length + 8 > this.data.length) {
             enlarge(8)
         }
-        byte[] data = this.data
-        int i = (int) (l >>> 32)
-        data[length++] = (byte) (i >>> 24)
-        data[length++] = (byte) (i >>> 16)
-        data[length++] = (byte) (i >>> 8)
-        data[length++] = (byte) i
-        i = (int) l
-        data[length++] = (byte) (i >>> 24)
-        data[length++] = (byte) (i >>> 16)
-        data[length++] = (byte) (i >>> 8)
-        data[length++] = (byte) i
+        val data = this.data
+        var i = (l >>> 32).toInt
+        data(length) = (i >>> 24).toByte
+        length += 1
+        data(length) = (i >>> 16).toByte
+        length += 1
+        data(length) = (i >>> 8).toByte
+        length += 1
+        data(length) = i.toByte
+        length += 1
+        i = l.toInt
+        data(length) = (i >>> 24).toByte
+        length += 1
+        data(length) = (i >>> 16).toByte
+        length += 1
+        data(length) = (i >>> 8).toByte
+        length += 1
+        data(length) = i.toByte
+        length += 1
         this.length = length
-        return this
-    }*/
+        this
+    }
 
     def putUTF8(s: String): ByteVector = {
         val charLength = s.length()
