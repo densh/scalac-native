@@ -765,20 +765,20 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
 
     override
     def visitTableSwitchInsn(min: Int, max: Int,
-            dflt: Label, labels: Label*): Unit = ???/*{
+            dflt: Label, labels: Label*): Unit = {
         lastCodeOffset = code.length
         // adds the instruction to the bytecode of the method
-        int source = code.length
+        val source = code.length
         code.putByte(Opcodes.TABLESWITCH)
         code.putByteArray(null, 0, (4 - code.length % 4) % 4)
         dflt.put(this, code, source, true)
         code.putInt(min).putInt(max)
-        for (int i = 0 i < labels.length ++i) {
+        (0 until labels.length).foreach { i =>
             labels(i).put(this, code, source, true)
         }
         // updates currentBlock
-        visitSwitchInsn(dflt, labels)
-    }*/
+        visitSwitchInsn(dflt, labels.toArray)
+    }
 
     override
     def visitLookupSwitchInsn(dflt: Label, keys: Array[Int],
