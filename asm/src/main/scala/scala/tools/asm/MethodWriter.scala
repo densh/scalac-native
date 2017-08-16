@@ -151,14 +151,14 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }*/
 
     override
-    def visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor = ???/*{
+    def visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor = {
         if (!ClassReader.ANNOTATIONS) {
             return null
         }
-        ByteVector bv = new ByteVector()
+        val bv = new ByteVector()
         // write type, and reserve space for values count
         bv.putShort(cw.newUTF8(desc)).putShort(0)
-        AnnotationWriter aw = new AnnotationWriter(cw, true, bv, bv, 2)
+        val aw = new AnnotationWriter(cw, true, bv, bv, 2)
         if (visible) {
             aw.next = anns
             anns = aw
@@ -166,8 +166,8 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
             aw.next = ianns
             ianns = aw
         }
-        return aw
-    }*/
+        aw
+    }
 
     override
     def visitTypeAnnotation(typeRef: Int, typePath: TypePath, desc: String, visible: Boolean): AnnotationVisitor = ???/*{
