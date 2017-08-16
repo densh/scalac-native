@@ -1398,89 +1398,81 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         frame = null
     }
 
-    private def writeFrame(): Unit = ???/*{
-        int clocalsSize = frame[1]
-        int cstackSize = frame[2]
+    private def writeFrame(): Unit = {
+        val clocalsSize = frame(1)
+        val cstackSize = frame(2)
         if ((cw.version & 0xFFFF) < Opcodes.V1_6) {
-            stackMap.putShort(frame[0]).putShort(clocalsSize)
+            stackMap.putShort(frame(0)).putShort(clocalsSize)
             writeFrameTypes(3, 3 + clocalsSize)
             stackMap.putShort(cstackSize)
             writeFrameTypes(3 + clocalsSize, 3 + clocalsSize + cstackSize)
             return
         }
-        int localsSize = previousFrame[1]
-        int type = FULL_FRAME
-        int k = 0
-        int delta
+        var localsSize = previousFrame(1)
+        var type_ = MethodWriter.FULL_FRAME
+        var k = 0
+        var delta = 0
         if (frameCount == 0) {
-            delta = frame[0]
+            delta = frame(0)
         } else {
-            delta = frame[0] - previousFrame[0] - 1
+            delta = frame(0) - previousFrame(0) - 1
         }
         if (cstackSize == 0) {
             k = clocalsSize - localsSize
-            switch (k) {
-            case -3:
-            case -2:
-            case -1:
-                type = CHOP_FRAME
+            k match {
+              case -3 | -2 | -1 =>
+                type_ = MethodWriter.CHOP_FRAME
                 localsSize = clocalsSize
-                break
-            case 0:
-                type = delta < 64 ? SAME_FRAME : SAME_FRAME_EXTENDED
-                break
-            case 1:
-            case 2:
-            case 3:
-                type = APPEND_FRAME
-                break
+              case 0 =>
+                type_ = if (delta < 64) MethodWriter.SAME_FRAME else MethodWriter.SAME_FRAME_EXTENDED
+              case 1 | 2 | 3 =>
+                type_ = MethodWriter.APPEND_FRAME
             }
         } else if (clocalsSize == localsSize && cstackSize == 1) {
-            type = delta < 63 ? SAME_LOCALS_1_STACK_ITEM_FRAME
-                    : SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED
+            type_ =
+              if (delta < 63) MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME
+              else MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED
         }
-        if (type != FULL_FRAME) {
+        if (type_ != MethodWriter.FULL_FRAME) {
             // verify if locals are the same
-            int l = 3
-            for (int j = 0 j < localsSize j++) {
-                if (frame[l] != previousFrame[l]) {
-                    type = FULL_FRAME
-                    break
+            var l = 3
+            var j = 0
+            var continue = true
+            while (continue && j < localsSize) {
+                if (frame(l) != previousFrame(l)) {
+                    type_ = MethodWriter.FULL_FRAME
+                    continue = false
+                } else {
+                  l += 1
+                  j += 1
                 }
-                l++
             }
         }
-        switch (type) {
-        case SAME_FRAME:
+        type_ match {
+          case MethodWriter.SAME_FRAME =>
             stackMap.putByte(delta)
-            break
-        case SAME_LOCALS_1_STACK_ITEM_FRAME:
-            stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME + delta)
+          case MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME =>
+            stackMap.putByte(MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME + delta)
             writeFrameTypes(3 + clocalsSize, 4 + clocalsSize)
-            break
-        case SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED:
-            stackMap.putByte(SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED).putShort(
+          case MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED =>
+            stackMap.putByte(MethodWriter.SAME_LOCALS_1_STACK_ITEM_FRAME_EXTENDED).putShort(
                     delta)
             writeFrameTypes(3 + clocalsSize, 4 + clocalsSize)
-            break
-        case SAME_FRAME_EXTENDED:
-            stackMap.putByte(SAME_FRAME_EXTENDED).putShort(delta)
-            break
-        case CHOP_FRAME:
-            stackMap.putByte(SAME_FRAME_EXTENDED + k).putShort(delta)
-            break
-        case APPEND_FRAME:
-            stackMap.putByte(SAME_FRAME_EXTENDED + k).putShort(delta)
+          case MethodWriter.SAME_FRAME_EXTENDED =>
+            stackMap.putByte(MethodWriter.SAME_FRAME_EXTENDED).putShort(delta)
+          case MethodWriter.CHOP_FRAME =>
+            stackMap.putByte(MethodWriter.SAME_FRAME_EXTENDED + k).putShort(delta)
+          case MethodWriter.APPEND_FRAME =>
+            stackMap.putByte(MethodWriter.SAME_FRAME_EXTENDED + k).putShort(delta)
             writeFrameTypes(3 + localsSize, 3 + clocalsSize)
-            break
-        // case FULL_FRAME:
-        default:
-            stackMap.putByte(FULL_FRAME).putShort(delta).putShort(clocalsSize)
+            // case MethodWriter.FULL_FRAME =>
+          case _ =>
+            stackMap.putByte(MethodWriter.FULL_FRAME).putShort(delta).putShort(clocalsSize)
             writeFrameTypes(3, 3 + clocalsSize)
             stackMap.putShort(cstackSize)
             writeFrameTypes(3 + clocalsSize, 3 + clocalsSize + cstackSize)
         }
-    }*/
+    }
 
     private def writeFrameTypes(start: Int, end: Int): Unit = ???/*{
         for (int i = start i < end ++i) {
