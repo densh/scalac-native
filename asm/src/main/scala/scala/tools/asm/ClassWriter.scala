@@ -606,16 +606,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
             desc: String, itf: Boolean): Int =
         newMethodItem(owner, name, desc, itf).index
 
-    def newInteger(value: Int): Item = ???/*{
+    def newInteger(value: Int): Item = {
         key.set(value)
-        Item result = get(key)
+        var result = get(key)
         if (result == null) {
             pool.putByte(INT).putInt(value)
-            result = new Item(index++, key)
+            result = new Item(index, key)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newFloat(value: Float): Item = ???/*{
         key.set(value)
