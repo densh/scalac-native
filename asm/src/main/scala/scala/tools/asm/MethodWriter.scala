@@ -1474,64 +1474,57 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         }
     }
 
-    private def writeFrameTypes(start: Int, end: Int): Unit = ???/*{
-        for (int i = start i < end ++i) {
-            int t = frame(i)
-            int d = t & Frame.DIM
+    private def writeFrameTypes(start: Int, end: Int): Unit = {
+      var i = 0
+      while (i < end) {
+            val t = frame(i)
+            var d = t & Frame.DIM
             if (d == 0) {
-                int v = t & Frame.BASE_VALUE
-                switch (t & Frame.BASE_KIND) {
-                case Frame.OBJECT:
+                val v = t & Frame.BASE_VALUE
+                (t & Frame.BASE_KIND) match {
+                  case Frame.OBJECT =>
                     stackMap.putByte(7).putShort(
-                            cw.newClass(cw.typeTable[v].strVal1))
-                    break
-                case Frame.UNINITIALIZED:
-                    stackMap.putByte(8).putShort(cw.typeTable[v].intVal)
-                    break
-                default:
+                            cw.newClass(cw.typeTable(v).strVal1))
+                  case Frame.UNINITIALIZED =>
+                    stackMap.putByte(8).putShort(cw.typeTable(v).intVal)
+                  case _ =>
                     stackMap.putByte(v)
                 }
             } else {
-                StringBuilder sb = new StringBuilder()
+                val sb = new StringBuilder()
                 d >>= 28
-                while (d-- > 0) {
+                while ({ val r = d; d -= 1; r } > 0) {
                     sb.append('[')
                 }
                 if ((t & Frame.BASE_KIND) == Frame.OBJECT) {
                     sb.append('L')
-                    sb.append(cw.typeTable[t & Frame.BASE_VALUE].strVal1)
-                    sb.append('')
+                    sb.append(cw.typeTable(t & Frame.BASE_VALUE).strVal1)
+                    sb.append(';')
                 } else {
-                    switch (t & 0xF) {
-                    case 1:
+                    (t & 0xF) match {
+                      case 1 =>
                         sb.append('I')
-                        break
-                    case 2:
+                      case 2 =>
                         sb.append('F')
-                        break
-                    case 3:
+                      case 3 =>
                         sb.append('D')
-                        break
-                    case 9:
+                      case 9 =>
                         sb.append('Z')
-                        break
-                    case 10:
+                      case 10 =>
                         sb.append('B')
-                        break
-                    case 11:
+                      case 11 =>
                         sb.append('C')
-                        break
-                    case 12:
+                      case 12 =>
                         sb.append('S')
-                        break
-                    default:
+                      case _ =>
                         sb.append('J')
                     }
                 }
                 stackMap.putByte(7).putShort(cw.newClass(sb.toString()))
             }
+        i += 1
         }
-    }*/
+    }
 
     private def writeFrameType(type_ : Object): Unit = ???/*{
         if (type instanceof String) {
