@@ -1477,7 +1477,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }
 
     private def writeFrameTypes(start: Int, end: Int): Unit = {
-      var i = 0
+      var i = start
       while (i < end) {
             val t = frame(i)
             var d = t & Frame.DIM
