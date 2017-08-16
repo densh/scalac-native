@@ -366,16 +366,16 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
     }
 
     override
-    def visitIntInsn(opcode: Int, operand: Int): Unit = ???/*{
+    def visitIntInsn(opcode: Int, operand: Int): Unit = {
         lastCodeOffset = code.length
         // Label currentBlock = this.currentBlock
         if (currentBlock != null) {
-            if (compute == FRAMES) {
+            if (compute == MethodWriter.FRAMES) {
                 currentBlock.frame.execute(opcode, operand, null, null)
             } else if (opcode != Opcodes.NEWARRAY) {
                 // updates current and max stack sizes only for NEWARRAY
                 // (stack size variation = 0 for BIPUSH or SIPUSH)
-                int size = stackSize + 1
+                val size = stackSize + 1
                 if (size > maxStackSize) {
                     maxStackSize = size
                 }
@@ -388,7 +388,7 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
         } else { // BIPUSH or NEWARRAY
             code.put11(opcode, operand)
         }
-    }*/
+    }
 
     override def visitVarInsn(opcode: Int, var_ : Int): Unit = {
         lastCodeOffset = code.length
