@@ -1427,6 +1427,8 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
                 type_ = if (delta < 64) MethodWriter.SAME_FRAME else MethodWriter.SAME_FRAME_EXTENDED
               case 1 | 2 | 3 =>
                 type_ = MethodWriter.APPEND_FRAME
+              case _ =>
+                ()
             }
         } else if (clocalsSize == localsSize && cstackSize == 1) {
             type_ =
