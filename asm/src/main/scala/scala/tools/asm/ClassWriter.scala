@@ -628,17 +628,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         return result
     }*/
 
-    def newLong(value: Long): Item = ???/*{
+    def newLong(value: Long): Item = {
         key.set(value)
-        Item result = get(key)
+        var result = get(key)
         if (result == null) {
             pool.putByte(LONG).putLong(value)
             result = new Item(index, key)
             index += 2
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newDouble(value: Double): Item = ???/*{
         key.set(value)
