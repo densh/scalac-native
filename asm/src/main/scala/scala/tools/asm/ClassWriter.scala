@@ -716,20 +716,20 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         result
     }
 
-    def getMergedType(type1: Int, type2: Int): Int = ???/*{
-        key2.type = TYPE_MERGED
-        key2.longVal = type1 | (((long) type2) << 32)
-        key2.hashCode = 0x7FFFFFFF & (TYPE_MERGED + type1 + type2)
-        Item result = get(key2)
+    def getMergedType(type1: Int, type2: Int): Int = {
+        key2.type_ = TYPE_MERGED
+        key2.longVal = type1 | (type2.toLong << 32)
+        key2.hashCode_ = 0x7FFFFFFF & (TYPE_MERGED + type1 + type2)
+        var result = get(key2)
         if (result == null) {
-            String t = typeTable[type1].strVal1
-            String u = typeTable[type2].strVal1
+            val t = typeTable(type1).strVal1
+            val u = typeTable(type2).strVal1
             key2.intVal = addType(getCommonSuperClass(t, u))
-            result = new Item((short) 0, key2)
+            result = new Item(0.toShort, key2)
             put(result)
         }
-        return result.intVal
-    }*/
+        result.intVal
+    }
 
     protected def getCommonSuperClass(type1: String, type2: String): String = ???/*{
         Class<?> c, d
