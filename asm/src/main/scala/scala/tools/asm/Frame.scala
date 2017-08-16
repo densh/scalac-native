@@ -56,20 +56,20 @@ class Frame {
         }
     }
 
-    private def set(local: Int, type_ : Int): Unit = ???/*{
+    private def set(local: Int, type_ : Int): Unit = {
         // creates and/or resizes the output local variables array if necessary
         if (outputLocals == null) {
-            outputLocals = new int[10]
+            outputLocals = new Array[Int](10)
         }
-        int n = outputLocals.length
+        val n = outputLocals.length
         if (local >= n) {
-            int[] t = new int[Math.max(local + 1, 2 * n)]
+            val t = new Array[Int](Math.max(local + 1, 2 * n))
             System.arraycopy(outputLocals, 0, t, 0, n)
             outputLocals = t
         }
         // sets the local variable
-        outputLocals[local] = type
-    }*/
+        outputLocals(local) = type_
+    }
 
     private def push(type_ : Int): Unit = {
         // creates and/or resizes the output stack array if necessary
