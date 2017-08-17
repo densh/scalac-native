@@ -868,21 +868,21 @@ class MethodWriter extends MethodVisitor(Opcodes.ASM5) {
 
     override
     def visitTryCatchBlock(start: Label, end:Label ,
-            handler:Label , type_ : String): Unit = ???/*{
-        ++handlerCount
-        Handler h = new Handler()
+            handler:Label , type_ : String): Unit = {
+        handlerCount += 1
+        val h = new Handler()
         h.start = start
         h.end = end
         h.handler = handler
-        h.desc = type
-        h.type = type != null ? cw.newClass(type) : 0
+        h.desc = type_
+        h.type_ = if (type_ != null) cw.newClass(type_) else 0
         if (lastHandler == null) {
             firstHandler = h
         } else {
             lastHandler.next = h
         }
         lastHandler = h
-    }*/
+    }
 
     override
     def visitTryCatchAnnotation(typeRef: Int,
