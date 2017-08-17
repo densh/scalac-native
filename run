@@ -9,20 +9,40 @@ SCALAC="scalac/$CLASSES"
 SCALACMAIN="scalacmain/$CLASSES"
 MAIN="main.Main"
 
-case $1 in
-    "j")
+rm -rf classes
+mkdir classes
+
+if [ $# -gt 0 ]; then
+    MODE="$1"
+    shift
+else
+    MODE="native"
+fi
+
+if [ $# -gt 0 ]; then
+    SOURCES=(${@})
+else
+    SOURCES=("tmp/A.scala")
+fi
+
+case $MODE in
+    "java")
+    time \
     java \
         -cp "asm/target/scala-2.11/classes:scalac/target/scala-2.11/classes:scalacmain/target/scala-2.11/classes:$REALSCALALIB" \
         $MAIN \
         -javabootclasspath "$RTJAR:$REALSCALALIB" \
         -bootclasspath "$RTJAR:$REALSCALALIB" \
-        tmp/A.scala
+        -d classes \
+        "${SOURCES[@]}"
     ;;
 
-    *)
+    "native")
+    time \
     scalacmain/target/scala-2.11/scalacmain-out \
         -javabootclasspath "$RTJAR:$REALSCALALIB" \
         -bootclasspath "$RTJAR:$REALSCALALIB" \
-        tmp/A.scala \
+        -d classes \
+        $SOURCES
     ;;
 esac
