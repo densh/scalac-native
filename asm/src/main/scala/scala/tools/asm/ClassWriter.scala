@@ -641,17 +641,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         result
     }
 
-    def newDouble(value: Double): Item = ???/*{
+    def newDouble(value: Double): Item = {
         key.set(value)
-        Item result = get(key)
+        var result = get(key)
         if (result == null) {
             pool.putByte(DOUBLE).putLong(key.longVal)
             result = new Item(index, key)
             index += 2
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     private def newString(value: String): Item = {
         key2.set(STR, value, null, null)
