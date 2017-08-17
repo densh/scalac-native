@@ -187,7 +187,8 @@ private object StatUtils {
   /** Truncates `n` at `decimals` decimals. */
   def format(n: Double, decimals: Int = 3): String = {
     val s = n.toString
-    s.substring(0, s.indexOf('.') + decimals + 1)
+    // s.substring(0, s.indexOf('.') + decimals + 1)
+    s.take(8)
   }
 
   /** Computes the `n`th percentile of `sortedData`. */
