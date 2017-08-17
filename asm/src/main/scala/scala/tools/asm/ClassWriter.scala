@@ -622,16 +622,17 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         result
     }
 
-    def newFloat(value: Float): Item = ???/*{
+    def newFloat(value: Float): Item = {
         key.set(value)
-        Item result = get(key)
+        var result = get(key)
         if (result == null) {
             pool.putByte(FLOAT).putInt(key.intVal)
-            result = new Item(index++, key)
+            result = new Item(index, key)
+            index += 1
             put(result)
         }
-        return result
-    }*/
+        result
+    }
 
     def newLong(value: Long): Item = {
         key.set(value)
