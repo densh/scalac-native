@@ -104,7 +104,11 @@ class ClassWriter extends ClassVisitor(Opcodes.ASM5) {
         }
         this.superName = if(superName == null) 0 else newClass(superName)
         if (interfaces != null && interfaces.length > 0) {
-            this.interfaces = interfaces.map(newClass)
+            interfaceCount = interfaces.length
+            this.interfaces = new Array[Int](interfaceCount)
+            (0 until interfaceCount).foreach { i =>
+              this.interfaces(i) = newClass(interfaces(i))
+            }
         }
     }
 
