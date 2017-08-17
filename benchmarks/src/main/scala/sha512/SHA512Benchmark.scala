@@ -28,7 +28,7 @@
 /* This is a Scala implementation of the SHA-512 hashing algorithm from:
  * https://github.com/ARMmbed/mbedtls/blob/bfafadb45daf8d2114e3109e2f9021fc72ee36bb/library/sha512.c
  *
- * Ported by Sébastien Doeraene
+ * Ported by Sebastien Doeraene
  *
  * This implementation MUST NOT be used for any cryptographic usage. I did not
  * make any effort to ensure its correctness wrt. the specification. It is only
