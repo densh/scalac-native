@@ -1,0 +1,18 @@
+#!/bin/zsh
+
+REALSCALALIB="/Users/denys/.ivy2//cache/org.scala-lang/scala-library/jars/scala-library-2.11.11.jar"
+RTJAR="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/rt.jar"
+
+CLASSES="target/scala-2.11/classes"
+ASM="asm/$CLASSES"
+SCALAC="scalac/$CLASSES"
+SCALACMAIN="scalacmain/$CLASSES"
+MAIN="main.Main"
+
+java \
+    -cp "asm/target/scala-2.11/classes:scalac/target/scala-2.11/classes:scalacmain/target/scala-2.11/classes:$REALSCALALIB" \
+    $MAIN \
+    -javabootclasspath "$RTJAR:$REALSCALALIB" \
+    -bootclasspath "$RTJAR:$REALSCALALIB" \
+    $@ \
+    tmp/A.scala
