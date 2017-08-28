@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-REALSCALALIB="/home/martin/Applications/scala/scala-2.11.11/lib/scala-library.jar"
-RTJAR="/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar"
+REALSCALALIB="/Users/denys/.ivy2//cache/org.scala-lang/scala-library/jars/scala-library-2.11.11.jar"
+RTJAR="/Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/jre/lib/rt.jar"
 
 CLASSES="target/scala-2.11/classes"
 ASM="asm/$CLASSES"
@@ -9,20 +9,11 @@ SCALAC="scalac/$CLASSES"
 SCALACMAIN="scalacmain/$CLASSES"
 MAIN="main.Main"
 
-case $1 in
-    "j")
-    java \
-        -cp "asm/target/scala-2.11/classes:scalac/target/scala-2.11/classes:scalacmain/target/scala-2.11/classes:$REALSCALALIB" \
-        $MAIN \
-        -javabootclasspath "$RTJAR:$REALSCALALIB" \
-        -bootclasspath "$RTJAR:$REALSCALALIB" \
-        tmp/A.scala
-    ;;
-
-    *)
-    scalacmain/target/scala-2.11/scalacmain-out \
-        -javabootclasspath "$RTJAR:$REALSCALALIB" \
-        -bootclasspath "$RTJAR:$REALSCALALIB" \
-        tmp/A.scala \
-    ;;
-esac
+#
+# instruments -t "Time Profiler"
+# iprofiler -counters -I 1 -T 10
+scalacmain/target/scala-2.11/scalacmain-out \
+    -javabootclasspath "$RTJAR:$REALSCALALIB" \
+    -bootclasspath "$RTJAR:$REALSCALALIB" \
+    $@ \
+    tmp/A.scala

@@ -5,8 +5,11 @@ val shared = Seq(
   scalaVersion := "2.11.11",
   // nativeLinkerReporter in Compile := LinkerReporter.toFile(
   //     target.value / "out.dot"),
-  nativeCompileOptions += "-O2",
-  nativeGC := "immix"
+  nativeCompileOptions ++= Seq("-O2"),
+  nativeGC := "none",
+  nativeEnableProfiling := true,
+  nativeProfilingLocation := new File("profile.data"),
+  nativeMode := "release"
 )
 
 lazy val asm =
